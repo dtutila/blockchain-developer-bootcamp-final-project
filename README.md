@@ -1,4 +1,4 @@
-# NFT Shatter (~~or how to sell my NFT slowly~~)
+# NFT Splitter (~~or how to sell my NFT slowly~~)
 
 An contract that allows the user to divide a NFT into multiple pieces.
 
