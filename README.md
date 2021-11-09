@@ -24,7 +24,7 @@ Bob will be able to buy more pieces or all the pieces after the lock time is ove
 Any one who owns all the pieces will be able to assemble the original NFT.
 
 ## Propossed solution
-To build a decentralized app to allow users to shatter/split a NFT and trade the pieces inside the app the pieces. 
+To build a decentralized app to allow users to shatter/split a NFT and trade the pieces inside the app. 
 
 ## Workflow example
 
