@@ -30,13 +30,13 @@ To build a decentralized app to allow users to shatter/split a NFT and trade the
 
 **Scenario 1**
 
-1- Alice will split a NFT in 4 parts.
+1- Alice splits a NFT in 4 parts.
 
-2- Alice will assing an initial list price for her NFT (each part will cost: number of parts / list price )
+2- Alice assings an initial list price for her NFT (each part will cost: number of parts / list price )
 
-3- Alice will stablish an extra percentage she will be willing to pay to buy any part of the original NFT back
+3- Alice stablishs an extra percentage she will be willing to pay to buy any part of the original NFT back
 
-4- Alice will set up a lock time in wich a buyer will not be able to buy any other part.
+4- Alice will set up a lock time of 15 days in wich a buyer will not be able to buy any other part after the initial purchase.
 
 5- Bob is interested to buy Alice's NFT so he buys one part.
 
