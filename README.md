@@ -23,5 +23,23 @@ Bob will be able to buy more pieces or all the pieces after the lock time is ove
 
 Any one who owns all the pieces will be able to assemble the original NFT.
 
-### Proposal
-To build a decentralized app to allow users to  shatter/split a NFT and trade the pieces inside the app the pieces. 
+## Propossed solution
+To build a decentralized app to allow users to shatter/split a NFT and trade the pieces inside the app the pieces. 
+
+## Workflow example
+
+**Scenario 1**
+
+1- Alice will split a NFT in 4 parts.
+
+2- Alice will assing an initial list price for her NFT (each part will cost: number of parts / list price )
+
+3- Alice will stablish an extra percentage she will be willing to pay to buy any part of the original NFT back
+
+4- Alice will set up a lock time in wich a buyer will not be able to buy any other part.
+
+5- Bob is interested to buy Alice's NFT so he buys one part.
+
+6- Bob waits untill the  lock time is over to buy more parts.
+
+7- Once Bob owns all the NFT parts, he will be able to transfer the ownership to his account.
