@@ -1,6 +1,6 @@
 # NFT Splitter (~~or how to sell my NFT slowly~~)
 
-An contract that allows the user to divide a NFT into multiple pieces.
+A contract that allows the user to divide a NFT into multiple pieces.
 
 ## Use case scenario
 Alice wants to sell a part of his favorite NFT to get some liquidity but she also wants to have the possibility of bought back the NFT any piece that she sold.
