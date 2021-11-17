@@ -1,19 +1,24 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.22 <0.9.0;
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
- import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
+import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Burnable.sol";
 
 import "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
 
-
-contract NFTSplitter is  ERC165, ERC1155, AccessControl, Pausable, ERC1155Burnable, IERC1155Receiver {
-    
-    bytes4 constant internal ERC1155_RECEIVED_SIG = 0xf23a6e61;
+contract NFTSplitter is
+    ERC165,
+    ERC1155,
+    AccessControl,
+    Pausable,
+    ERC1155Burnable,
+    IERC1155Receiver
+{
+    bytes4 internal constant ERC1155_RECEIVED_SIG = 0xf23a6e61;
     // bytes4(keccak256("onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)"))
-    bytes4 constant internal ERC1155_BATCH_RECEIVED_SIG = 0xbc197c81;
+    bytes4 internal constant ERC1155_BATCH_RECEIVED_SIG = 0xbc197c81;
     //initial roles
     bytes32 public constant URI_SETTER_ROLE = keccak256("URI_SETTER_ROLE");
     bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
@@ -21,7 +26,6 @@ contract NFTSplitter is  ERC165, ERC1155, AccessControl, Pausable, ERC1155Burnab
 
     // variables used to control logic
     address public originalNFT; //original NFT address
-     address public anotherAddress; //original NFT address
     address public originalOwner; //original NFT owner address
     uint8 public parts; //number of pieces
     uint256 public lockEndDate; //number of days the parts will be locked to buy/sell, value is set in constructor
@@ -31,8 +35,8 @@ contract NFTSplitter is  ERC165, ERC1155, AccessControl, Pausable, ERC1155Burnab
     // Contract symbol
     string public symbol;
 
-    uint public tokenId;
-    
+    uint256 public tokenId;
+
     mapping(address => uint8) owners;
 
     //modifiers
@@ -74,7 +78,7 @@ contract NFTSplitter is  ERC165, ERC1155, AccessControl, Pausable, ERC1155Burnab
 
     //initial contructor, no logic yet
     /**
-     * @notice User will provice a NFT, the number of part the NFT will be split and 
+     * @notice User will provice a NFT, the number of part the NFT will be split and
      * the number of days that any parts will be locked (not for sale)
      * @dev contract constructor, it will recieve the NFT and it will mint the new parts
      * @param _originalNFTAddress Original NFT address
@@ -97,14 +101,12 @@ contract NFTSplitter is  ERC165, ERC1155, AccessControl, Pausable, ERC1155Burnab
 
         lockEndDate = block.timestamp + (_lockTimeInDays * 1 days);
         originalNFT = _originalNFTAddress;
-        anotherAddress = _originalNFTAddress;
         originalOwner = msg.sender;
         initialSellAmount = _initialSellAmount;
-        name = 'Split - test' ;
-        symbol = 'NS';
+        name = "Split - test";
+        symbol = "NS";
         tokenId = _tokenId;
-       
-
+        parts = _parts;
     }
 
     //no set uri function needed
@@ -158,7 +160,7 @@ contract NFTSplitter is  ERC165, ERC1155, AccessControl, Pausable, ERC1155Burnab
     function supportsInterface(bytes4 interfaceId)
         public
         view
-        override( ERC165, IERC165, ERC1155, AccessControl)
+        override(ERC165, IERC165, ERC1155, AccessControl)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
@@ -169,14 +171,21 @@ contract NFTSplitter is  ERC165, ERC1155, AccessControl, Pausable, ERC1155Burnab
      * @dev this method will return the NFT uri
      * @return Original NFT uri
      */
-    function uri(uint256 id) public view virtual override returns (string memory) {
+    function uri(uint256 id)
+        public
+        view
+        virtual
+        override
+        returns (string memory)
+    {
         return "";
     }
 
-    function splitMyNFT () public {
-        uint amount = ERC1155(originalNFT).balanceOf(msg.sender, tokenId);
-        _mint(address(this), tokenId, amount, "");
-
+    function splitMyNFT() public {
+        uint256 amount = ERC1155(originalNFT).balanceOf(msg.sender, tokenId);
+        _mint(msg.sender, tokenId, amount, "");
+        ERC1155(originalNFT).safeTransferFrom(msg.sender, address(this), tokenId, amount, "");
+        //ERC1155(address(this)).setApprovalForAll(address(this), true);
     }
 
     /**
@@ -197,26 +206,29 @@ contract NFTSplitter is  ERC165, ERC1155, AccessControl, Pausable, ERC1155Burnab
      * This method can only be executed if the address owns all the pieces.
      *
      */
-    function glueAllTogether() public ownsAllParts {}
+    function glueAllTogether() public  {
+    uint256 amount = ERC1155(originalNFT).balanceOf(address(this), tokenId);
+    ERC1155(originalNFT).safeTransferFrom( address(this), msg.sender, tokenId, amount, "");
 
+    }
 
     function onERC1155Received(
-        address /*_operator*/,
-        address /*_from*/,
+        address, /*_operator*/
+        address, /*_from*/
         uint256 _id,
-        uint256 /*_amount*/,
+        uint256, /*_amount*/
         bytes calldata /*_data*/
-    )
-        override
-        external
-        returns(bytes4)
-    {
+    ) external override returns (bytes4) {
         return ERC1155_RECEIVED_SIG;
     }
-     function onERC1155BatchReceived(address /*_operator*/, address /*_from*/, uint256[] memory /*_ids*/, uint256[] memory /*_values*/, bytes memory /*_data*/)
-        override public pure returns(bytes4)
-    {
+
+    function onERC1155BatchReceived(
+        address, /*_operator*/
+        address, /*_from*/
+        uint256[] memory, /*_ids*/
+        uint256[] memory, /*_values*/
+        bytes memory /*_data*/
+    ) public pure override returns (bytes4) {
         return ERC1155_BATCH_RECEIVED_SIG;
     }
-
 }
