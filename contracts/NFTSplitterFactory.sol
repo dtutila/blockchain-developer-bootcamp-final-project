@@ -9,19 +9,31 @@ contract NFTSplitterFactory {
   address private NFTSplitterBase;
   mapping(address => NFTSplitterProxy) private splitters;
 
+  /**
+     * @dev Equivalent to multiple {TransferSingle} events, where `operator`, `from` and `to` are the same for all
+     * transfers.
+     */
+    event ProxyCreated(
+        address indexed proxyAddress,
+        address indexed NFTOwner
+    );
+
   constructor(address _settings) {
-    owner = msg.sender;
+    owner = msg.sender; // factory owner
     settings = _settings;
     NFTSplitterBase = NFTSplitterAdmin(settings).getImplementation(); 
   }
 
-  function createNFTSplitter() public payable returns (NFTSplitterProxy){
-    NFTSplitterProxy prx = new NFTSplitterProxy (NFTSplitterBase, owner, "");
-
+  function createNFTSplitter() public payable returns (NFTSplitterProxy prx){
+    prx = new NFTSplitterProxy (msg.sender, NFTSplitterBase, settings, "");
+    emit ProxyCreated(address(prx), msg.sender);  
     return prx;
   }
 
   function getNFTSplitterBase() external view returns (address) {
     return NFTSplitterBase;
+  }
+   function getsettings() external view returns (address) {
+    return settings;
   }
 }

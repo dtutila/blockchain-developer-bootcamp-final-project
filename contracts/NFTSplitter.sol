@@ -89,7 +89,8 @@ contract NFTSplitter is
     constructor(
         
     ) ERC1155("") {
-     
+        name = "NFT Splitter";
+        symbol = "NFTS";
     }
 
     //no set uri function needed

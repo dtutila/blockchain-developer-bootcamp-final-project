@@ -28,12 +28,6 @@ contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
     // Used as the URI for all token types by relying on ID substitution, e.g. https://token-cdn-domain/{id}.json
     string private _uri;
 
-     // Contract name
-    string public name;
-    
-    // Contract symbol
-    string public symbol;
-
     /**
      * @dev See {_setURI}.
      */
