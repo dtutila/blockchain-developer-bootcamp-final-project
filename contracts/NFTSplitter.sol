@@ -1,34 +1,19 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.22 <0.9.0;
 import "./ERC1155.sol";
+import "./NFTSplitterStorage.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
 
 contract NFTSplitter is
+    NFTSplitterStorage,
     ERC165,
     ERC1155,
     IERC1155Receiver
 {
-    bytes4 internal constant ERC1155_RECEIVED_SIG = 0xf23a6e61;
-    bytes4 internal constant ERC1155_BATCH_RECEIVED_SIG = 0xbc197c81;
-    //initial roles
-    // bytes32 public constant URI_SETTER_ROLE = keccak256("URI_SETTER_ROLE");
-    // bytes32 public constant PAUSER_ROLE = keccak256("PAUSER_ROLE");
-    // bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
-
-    // variables used to control logic
-    address public originalNFT; //original NFT address
-    address public originalOwner; //original NFT owner address
-    uint8 public pieces; //number of pieces
-    uint256 public lockEndDate; //number of days the pieces will be locked to buy/sell, value is set in constructor
-    uint8 public initialSellAmount; //number of pieces that can be sold during lock time
-    uint256 public NFTPrice; //
-    uint128 public buyPercentage;
-
-    uint256 public tokenId;
-
-    mapping(address => uint256) owners;
-    mapping(uint256 => address) ownersByPiece;
+   // bytes4 internal constant ERC1155_RECEIVED_SIG = 0xf23a6e61;
+   // bytes4 internal constant ERC1155_BATCH_RECEIVED_SIG = 0xbc197c81;
+    uint8 public constant version = 1;
 
     //modifiers
     /**
@@ -76,15 +61,7 @@ contract NFTSplitter is
     }
 
     //initial contructor, no logic yet
-    /**
-     * @notice User will provice a NFT, the number of part the NFT will be split and
-     * the number of days that any pieces will be locked (not for sale)
-     * @dev contract constructor, it will recieve the NFT and it will mint the new pieces
-     * @param _originalNFTAddress Original NFT address
-     * @param _pieces    Number of pieces that will be minted
-     * @param _lockTimeInDays Lock time in days
-     *
-     */
+ /*
     constructor(
         address _originalNFTAddress,
         uint256 _tokenId,
@@ -94,7 +71,7 @@ contract NFTSplitter is
         uint8 _initialSellAmount,
         uint256 _lockTimeInDays
     ) ERC1155(ERC1155(_originalNFTAddress).uri(_tokenId)) {
-        assert(_initialSellAmount <= _pieces);
+        require(_initialSellAmount <= _pieces);
         lockEndDate = block.timestamp + (_lockTimeInDays * 1 days);
         originalNFT = _originalNFTAddress;
         originalOwner = msg.sender;
@@ -107,6 +84,12 @@ contract NFTSplitter is
         
         name = string(abi.encodePacked("NFT Splitter -", ERC1155(_originalNFTAddress).name));  
         symbol = string(abi.encodePacked("NS", ERC1155(_originalNFTAddress).symbol));  //"NS" + ERC1155(_originalNFTAddress).symbol;
+    }*/
+
+    constructor(
+        
+    ) ERC1155("") {
+     
     }
 
     //no set uri function needed
@@ -198,7 +181,25 @@ contract NFTSplitter is
         _burnBatch(account, ids, values);
     }
 
-    function splitMyNFT() public {
+    function splitMyNFT(
+        address _originalNFTAddress,
+        uint256 _tokenId,
+        uint256 _price,
+        uint128 _buyPercentage,
+        uint8 _pieces,
+        uint8 _initialSellAmount,
+        uint256 _lockTimeInDays
+    ) public {
+        lockEndDate = block.timestamp + (_lockTimeInDays * 1 days);
+        originalNFT = _originalNFTAddress;
+        originalOwner = msg.sender;
+        initialSellAmount = _initialSellAmount;
+       
+        tokenId = _tokenId;
+        pieces = _pieces;
+        NFTPrice = _price;
+        buyPercentage = _buyPercentage;
+
         uint256 amount = ERC1155(originalNFT).balanceOf(msg.sender, tokenId);
         _mint(msg.sender, tokenId, amount, "");
         ERC1155(originalNFT).safeTransferFrom(
@@ -279,7 +280,7 @@ contract NFTSplitter is
         uint256, /*_amount*/
         bytes calldata /*_data*/
     ) external override returns (bytes4) {
-        return ERC1155_RECEIVED_SIG;
+        return this.onERC1155Received.selector;
     }
 
     function onERC1155BatchReceived(
@@ -289,7 +290,7 @@ contract NFTSplitter is
         uint256[] memory, /*_values*/
         bytes memory /*_data*/
     ) public pure override returns (bytes4) {
-        return ERC1155_BATCH_RECEIVED_SIG;
+         return this.onERC1155BatchReceived.selector;
     }
 
     // Function to receive Ether. msg.data must be empty
