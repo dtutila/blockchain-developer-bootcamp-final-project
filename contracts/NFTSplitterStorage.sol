@@ -17,12 +17,6 @@ contract NFTSplitterStorage {
     mapping(address => uint256) owners;
     mapping(uint256 => address) ownersByPiece;
 
-    // Contract name
-    string public name;
-    
-    // Contract symbol
-    string public symbol;
-
 
   constructor() public {
   }

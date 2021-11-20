@@ -21,13 +21,13 @@ contract NFTSplitter is
      *
      */
     modifier isNotLocked() {
-        require(block.timestamp > lockEndDate);
+        require(block.timestamp > lockEndDate, "NFTSplitter: Lock time is not over");
         _;
     }
 
     modifier allowToBuy() {
         if (block.timestamp < lockEndDate){
-            require(owners[originalOwner] < initialSellAmount);
+            require(owners[originalOwner] < initialSellAmount, "NFTSplitter: No more supply");
         } 
                 
         _;
@@ -38,7 +38,7 @@ contract NFTSplitter is
      *
      */
     modifier onlyOriginalNFTOwner() {
-        require(originalOwner == msg.sender);
+        require(originalOwner == msg.sender, "NFTSplitter: Only original NFT owner can execute this function");
         _;
     }
 
@@ -47,7 +47,7 @@ contract NFTSplitter is
      *
      */
     modifier notOriginalNFTOwner() {
-        require(originalOwner != msg.sender);
+        require(originalOwner != msg.sender, "NFTSplitter: Original NFT owner is not allowed to execute this function");
         _;
     }
 
@@ -56,35 +56,24 @@ contract NFTSplitter is
      *
      */
     modifier ownsAllPieces() {
-        require(owners[msg.sender] == pieces);
+        require(owners[msg.sender] == pieces, "NFTSplitter: You need to own all tokens");
         _;
     }
 
-    //initial contructor, no logic yet
- /*
-    constructor(
-        address _originalNFTAddress,
-        uint256 _tokenId,
-        uint256 _price,
-        uint128 _buyPercentage,
-        uint8 _pieces,
-        uint8 _initialSellAmount,
-        uint256 _lockTimeInDays
-    ) ERC1155(ERC1155(_originalNFTAddress).uri(_tokenId)) {
-        require(_initialSellAmount <= _pieces);
-        lockEndDate = block.timestamp + (_lockTimeInDays * 1 days);
-        originalNFT = _originalNFTAddress;
-        originalOwner = msg.sender;
-        initialSellAmount = _initialSellAmount;
-       
-        tokenId = _tokenId;
-        pieces = _pieces;
-        NFTPrice = _price;
-        buyPercentage = _buyPercentage;
-        
-        name = string(abi.encodePacked("NFT Splitter -", ERC1155(_originalNFTAddress).name));  
-        symbol = string(abi.encodePacked("NS", ERC1155(_originalNFTAddress).symbol));  //"NS" + ERC1155(_originalNFTAddress).symbol;
-    }*/
+
+    /**
+     * @dev 
+     */
+    event NFTSplit(
+        address indexed originalNFTAddress,
+        uint indexed id,
+        uint indexed pieces,
+        uint  price,
+        uint  percentage,
+        uint  lockTime,
+        string name
+    );
+
 
     constructor(
         
@@ -106,8 +95,7 @@ contract NFTSplitter is
         uint256 amount,
         bytes memory data
     ) public  {
-        // _mint(account, id, amount, data);
-        revert();
+        revert("Function not implemented");
     }
 
     //mint function will not be needed after contract creation
@@ -117,8 +105,7 @@ contract NFTSplitter is
         uint256[] memory amounts,
         bytes memory data
     ) public {
-        // _mintBatch(to, ids, amounts, data);
-        revert();
+        revert("Function not implemented");
     }
 
     function _beforeTokenTransfer(
@@ -190,11 +177,13 @@ contract NFTSplitter is
         uint8 _pieces,
         uint8 _initialSellAmount,
         uint256 _lockTimeInDays
-    ) public {
+    ) public onlyOriginalNFTOwner {
         lockEndDate = block.timestamp + (_lockTimeInDays * 1 days);
         originalNFT = _originalNFTAddress;
         originalOwner = msg.sender;
         initialSellAmount = _initialSellAmount;
+        name = string(abi.encodePacked("NFT Splitter - ", ERC1155(originalNFT).name()));
+        symbol = string(abi.encodePacked("NS", ERC1155(originalNFT).symbol()));
        
         tokenId = _tokenId;
         pieces = _pieces;
@@ -211,6 +200,8 @@ contract NFTSplitter is
             ""
         );
         owners[msg.sender] = amount;
+        
+        emit NFTSplit(originalNFT, tokenId, pieces, NFTPrice, buyPercentage, lockEndDate, name);
     }
 
     /**

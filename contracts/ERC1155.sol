@@ -19,6 +19,12 @@ import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
     using Address for address;
 
+    // Contract name
+    string public name;
+
+    // Contract symbol
+    string public symbol;
+
     // Mapping from token ID to account balances
     mapping(uint256 => mapping(address => uint256)) private _balances;
 
@@ -27,6 +33,8 @@ contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
 
     // Used as the URI for all token types by relying on ID substitution, e.g. https://token-cdn-domain/{id}.json
     string private _uri;
+
+
 
     /**
      * @dev See {_setURI}.

@@ -5,6 +5,12 @@ import "./NFTSplitterAdmin.sol";
 import "./NFTSplitterStorage.sol";
 
 contract NFTSplitterProxy is NFTSplitterStorage, Proxy {
+    // Contract name
+    string public name;
+
+    // Contract symbol
+    string public symbol;
+
     address private implementation;
     address private settings;
 

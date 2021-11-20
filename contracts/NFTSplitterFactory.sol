@@ -9,9 +9,8 @@ contract NFTSplitterFactory {
   address private NFTSplitterBase;
   mapping(address => NFTSplitterProxy) private splitters;
 
-  /**
-     * @dev Equivalent to multiple {TransferSingle} events, where `operator`, `from` and `to` are the same for all
-     * transfers.
+    /**
+     * @dev 
      */
     event ProxyCreated(
         address indexed proxyAddress,
@@ -33,7 +32,5 @@ contract NFTSplitterFactory {
   function getNFTSplitterBase() external view returns (address) {
     return NFTSplitterBase;
   }
-   function getsettings() external view returns (address) {
-    return settings;
-  }
+  
 }
