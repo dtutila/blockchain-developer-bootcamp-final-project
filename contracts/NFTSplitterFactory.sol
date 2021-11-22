@@ -13,6 +13,7 @@ contract NFTSplitterFactory {
      * @dev 
      */
     event ProxyCreated(
+        address indexed nft,
         address indexed proxyAddress,
         address indexed NFTOwner
     );
@@ -23,9 +24,10 @@ contract NFTSplitterFactory {
     NFTSplitterBase = NFTSplitterAdmin(settings).getImplementation(); 
   }
 
-  function createNFTSplitter() public payable returns (NFTSplitterProxy prx){
-    prx = new NFTSplitterProxy (msg.sender, NFTSplitterBase, settings, "");
-    emit ProxyCreated(address(prx), msg.sender);  
+  function createNFTSplitter(address _nft) public payable returns (NFTSplitterProxy prx){
+    prx = new NFTSplitterProxy (_nft, msg.sender, NFTSplitterBase, settings, "");
+    NFTSplitterAdmin(settings).registerProxy(_nft,  address(prx));
+    emit ProxyCreated(_nft, address(prx), msg.sender);
     return prx;
   }
 

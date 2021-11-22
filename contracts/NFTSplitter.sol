@@ -4,6 +4,7 @@ import "./ERC1155.sol";
 import "./NFTSplitterStorage.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
+import  "./NFTSplitterAdmin.sol";
 
 contract NFTSplitter is
     NFTSplitterStorage,
@@ -27,7 +28,7 @@ contract NFTSplitter is
 
     modifier allowToBuy() {
         if (block.timestamp < lockEndDate){
-            require(owners[originalOwner] < initialSellAmount, "NFTSplitter: No more supply");
+            require(owners[originalOwner] < initialSellSupply, "NFTSplitter: No more supply");
         } 
                 
         _;
@@ -47,7 +48,7 @@ contract NFTSplitter is
      *
      */
     modifier notOriginalNFTOwner() {
-        require(originalOwner != msg.sender, "NFTSplitter: Original NFT owner is not allowed to execute this function");
+        require(originalOwner != msg.sender, "NFTSplitter: Original NFT owner is not allowed to execute this function" );
         _;
     }
 
@@ -56,7 +57,8 @@ contract NFTSplitter is
      *
      */
     modifier ownsAllPieces() {
-        require(owners[msg.sender] == pieces, "NFTSplitter: You need to own all tokens");
+
+        require(balanceOf(msg.sender, 1) == pieces, "NFTSplitter: you should own all pieces to withdraw the original NFT");
         _;
     }
 
@@ -74,6 +76,31 @@ contract NFTSplitter is
         string name
     );
 
+  /*  event NFTSplitDeployed(
+        address indexed originalNFTAddress,
+        address indexed NFTOwner
+    );*/
+
+    event NFTSplitSold(
+        address indexed pieceOwner,
+        address indexed buyer,
+        uint indexed amount,
+        uint  price
+    );
+
+    event NFTSplitBuyBack(
+        address indexed originalNFTAddress,
+        address indexed buyer,
+        uint  amount,
+        uint  price
+    );
+
+    event NFTWithdraw(
+        address indexed originalNFTAddress,
+        address indexed buyer,
+        uint  amount
+
+    );
 
     constructor(
         
@@ -150,7 +177,7 @@ contract NFTSplitter is
     ) public virtual {
         require(
             account == _msgSender() || isApprovedForAll(account, _msgSender()),
-            "ERC1155: caller is not owner nor approved"
+            "NFTSplitter: caller is not owner nor approved"
         );
 
         _burn(account, id, value);
@@ -163,14 +190,32 @@ contract NFTSplitter is
     ) public virtual {
         require(
             account == _msgSender() || isApprovedForAll(account, _msgSender()),
-            "ERC1155: caller is not owner nor approved"
+            "NFTSplitter: caller is not owner nor approved"
         );
 
         _burnBatch(account, ids, values);
     }
 
+    /**
+     * @dev See {IERC1155-safeTransferFrom}.
+     */
+    function safeTransferFrom(
+        address from,
+        address to,
+        uint256 id,
+        uint256 amount,
+        bytes memory data
+    ) public  override {
+        require(
+            NFTSplitterAdmin(settings).isValidProxy(originalNFT, address(this))
+        ,
+        "NFTSplitter: caller is not a valid proxy, owner nor approved "
+        );
+        _safeTransferFrom(from, to, id, amount, data);
+    }
+
     function splitMyNFT(
-        address _originalNFTAddress,
+
         uint256 _tokenId,
         uint256 _price,
         uint128 _buyPercentage,
@@ -179,9 +224,9 @@ contract NFTSplitter is
         uint256 _lockTimeInDays
     ) public onlyOriginalNFTOwner {
         lockEndDate = block.timestamp + (_lockTimeInDays * 1 days);
-        originalNFT = _originalNFTAddress;
+      //  originalNFT = _originalNFTAddress;
         originalOwner = msg.sender;
-        initialSellAmount = _initialSellAmount;
+        initialSellSupply = _initialSellAmount;
         name = string(abi.encodePacked("NFT Splitter - ", ERC1155(originalNFT).name()));
         symbol = string(abi.encodePacked("NS", ERC1155(originalNFT).symbol()));
        
@@ -191,7 +236,7 @@ contract NFTSplitter is
         buyPercentage = _buyPercentage;
 
         uint256 amount = ERC1155(originalNFT).balanceOf(msg.sender, tokenId);
-        _mint(msg.sender, tokenId, amount, "");
+        _mint(msg.sender, tokenId, pieces, "");
         ERC1155(originalNFT).safeTransferFrom(
             msg.sender,
             address(this),
@@ -200,7 +245,9 @@ contract NFTSplitter is
             ""
         );
         owners[msg.sender] = amount;
-        
+        //setting the owners
+
+
         emit NFTSplit(originalNFT, tokenId, pieces, NFTPrice, buyPercentage, lockEndDate, name);
     }
 
@@ -208,44 +255,46 @@ contract NFTSplitter is
      * @dev method used by the original NFT to buy back any piece that was sold
      *
      */
-    function buyBackPiece(uint256 pieceId) public payable onlyOriginalNFTOwner {
-        address currentOwner = ownersByPiece[pieceId];
-        require(currentOwner != msg.sender);
-        require (balanceOf(currentOwner, pieceId) > 0);
+
+    function buyBackPieces(address _from, uint256 amount) public payable onlyOriginalNFTOwner {
+        uint currentBalance = balanceOf(_from, 1);
+
+       // require (currentBalance > 0 && currentBalance >= amount, 'NFTSplitter: not enough pieces to buy back');
        
 
-        ownersByPiece[pieceId] = msg.sender;
-        owners[msg.sender] = pieceId;
-        uint piecePrice = (NFTPrice * buyPercentage) / 100 / pieces;
+        uint piecePrice = NFTPrice / pieces;//( (NFTPrice * buyPercentage) / ( 100 * pieces ));
+        uint buyBackPrice = (piecePrice + (piecePrice * buyPercentage  / 100 )) * amount;
+        require(msg.value  >= piecePrice, 'NFTSplitter: insufficient value for this transaction');
 
-        require(piecePrice >= msg.value);
-
-        safeTransferFrom(currentOwner, msg.sender, pieceId, 1, "");
-        (bool sent, bytes memory data) = currentOwner.call{value: msg.value}("");
+        safeTransferFrom(_from, msg.sender, 1, amount, "");
+        (bool sent, bytes memory data) = _from.call{value: buyBackPrice}("");
 
         require(sent, "Failed to send Ether");
-        
-       
+        emit NFTSplitBuyBack(originalNFT, msg.sender, buyPercentage, buyBackPrice);
+
     }
 
     /**
-     * @dev method used to buy back piece of the original NFT from the original Owner
+     * @dev method used to buy a piece of the original NFT from the original Owner
      *
      *
      */
-    function buyPart(uint256 pieceId) public payable notOriginalNFTOwner {
-        address currentOwner = ownersByPiece[pieceId];
-        require(currentOwner != msg.sender);
 
-        uint piecePrice = NFTPrice / pieces;
+    function buyPiecesFromOwner( uint256 amount) public payable notOriginalNFTOwner {
+        uint currentSupply = balanceOf(originalOwner, 1);
+        require(currentSupply - initialSellSupply >= amount, 'NFTSplitter: not enough pieces to buy');
 
-        require(piecePrice >= msg.value);
-        ownersByPiece[pieceId] = msg.sender;
-        owners[msg.sender] = pieceId;
+        require(originalOwner != msg.sender, 'NFTSplitter: you are the current nft owner');
 
-        safeTransferFrom(currentOwner, msg.sender, pieceId, 1, "");
-        (bool sent, bytes memory data) = currentOwner.call{value: msg.value}("");
+        uint piecePrice = (NFTPrice / pieces ) * amount;
 
+        require(msg.value >= piecePrice, 'NFTSplitter: not enough value to buy pieces');
+
+      //  ERC1155(address(this)).setApprovalForAll(buyer, true);
+        safeTransferFrom(originalOwner, msg.sender, 1, amount, "");
+        (bool sent, bytes memory data) = originalOwner.call{value: msg.value}("");
+
+        emit NFTSplitSold(originalOwner, msg.sender, amount, piecePrice);
         require(sent, "Failed to send Ether");
     }
 
@@ -254,7 +303,10 @@ contract NFTSplitter is
      * This method can only be executed if the address owns all the pieces.
      *
      */
-    function glueAllTogether() public ownsAllPieces {
+    event log(address currentOwner, uint amount);
+    function withdrawOriginalNFT() public ownsAllPieces {
+
+        //require(pieces == ownedPieces, 'NFTSplitter: you should own all pieces to withdraw the original NFT');
         uint256 amount = ERC1155(originalNFT).balanceOf(address(this), tokenId);
         ERC1155(originalNFT).safeTransferFrom(
             address(this),
@@ -263,6 +315,10 @@ contract NFTSplitter is
             amount,
             ""
         );
+        //burn pieces
+        _burn(msg.sender, 1, pieces);
+        emit NFTWithdraw(originalNFT, msg.sender, amount);
+
     }
 
     function onERC1155Received(

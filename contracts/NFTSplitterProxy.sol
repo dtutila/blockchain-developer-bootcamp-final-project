@@ -12,9 +12,10 @@ contract NFTSplitterProxy is NFTSplitterStorage, Proxy {
     string public symbol;
 
     address private implementation;
-    address private settings;
+   // address private settings;
 
     constructor(
+        address _nft,
         address _owner,
         address _logic,
         address _settings,
@@ -24,6 +25,7 @@ contract NFTSplitterProxy is NFTSplitterStorage, Proxy {
         implementation = _logic;
         name = "proxy";
         originalOwner = _owner;
+        originalNFT = _nft;
     }
 
     function _implementation() internal view override returns (address) {

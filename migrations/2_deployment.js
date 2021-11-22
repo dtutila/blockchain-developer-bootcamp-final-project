@@ -15,6 +15,7 @@ module.exports = async function (deployer, network, accounts) {
     }
 
     deployer.deploy(admin,  {from: owner});
+
     await deployer.deploy(base,  {from: owner}).then(async (txInfo) => {
             let instance = await admin.deployed();
             await instance.upgrade(base.address, {from: owner});
@@ -22,7 +23,12 @@ module.exports = async function (deployer, network, accounts) {
 
     
 
-    await deployer.deploy(factory, admin.address, {from: owner});
+    await deployer.deploy(factory, admin.address, {from: owner}).then(async (txInfo) => {
+        let f = await factory.deployed();
+        let instance = await admin.deployed();
+        await instance.registerFactory(f.address, {from: owner});
+
+    });;
   
     console.log('DEPLOYMENT DONE');
 };
