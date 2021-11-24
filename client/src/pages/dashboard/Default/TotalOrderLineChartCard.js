@@ -16,7 +16,7 @@ import ChartDataMonth from './chart-data/total-order-month-line-chart';
 import ChartDataYear from './chart-data/total-order-year-line-chart';
 
 // assets
-import LocalMallOutlinedIcon from '@material-ui/icons/LocalMallOutlined';
+import LocalMallOutlinedIcon from '@material-ui/icons/AddBox';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 
 // style constant

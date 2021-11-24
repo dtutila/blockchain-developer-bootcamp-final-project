@@ -13,7 +13,7 @@ import clsx from 'clsx';
 import Breadcrumbs from './../../components/extended/Breadcrumbs';
 import Header from './Header';
 import Sidebar from './Sidebar';
-import Customization from './../Customization';
+// import Customization from './../Customization';
 import navigation from './../../menu-items';
 import { drawerWidth } from '../../store/constant';
 import { SET_MENU } from './../../store/actions';
@@ -127,7 +127,7 @@ const MainLayout = ({ children }) => {
                 <div>{children}</div>
                 {/* </Main> */}
             </main>
-            <Customization />
+            {/*<Customization />*/}
         </div>
     );
 };

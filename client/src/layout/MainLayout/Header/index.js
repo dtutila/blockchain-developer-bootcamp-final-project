@@ -7,9 +7,9 @@ import { Avatar, Box, ButtonBase } from '@material-ui/core';
 
 // project imports
 import LogoSection from '../LogoSection';
-import SearchSection from './SearchSection';
-/*import ProfileSection from './ProfileSection';
-import NotificationSection from './NotificationSection';*/
+import CreateSplitterSection from './CreateSplitterSection';
+import MetamaskSection from './MetamaskSection';
+/*import NotificationSection from './NotificationSection';*/
 
 // assets
 import { IconMenu2 } from '@tabler/icons';
@@ -59,13 +59,12 @@ const Header = ({ handleLeftDrawerToggle }) => {
             </div>
 
             {/* header search */}
-            <SearchSection theme="light" />
+            <CreateSplitterSection/>
             <div className={classes.grow} />
             <div className={classes.grow} />
 
-            {/* notification & profile */}
-           {/* <NotificationSection />
-            <ProfileSection />*/}
+            {/* metamask section */}
+            <MetamaskSection />
         </React.Fragment>
     );
 };

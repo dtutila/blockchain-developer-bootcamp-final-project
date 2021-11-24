@@ -1,7 +1,10 @@
 
-import web3 from './web3';
-import factory from './nftsplitter-factory';
+// import web3 from './web3';
+// import factory from './nftsplitter-factory';
 import React from 'react';
+import { Web3ReactProvider } from '@web3-react/core';
+import { ethers } from 'ethers';
+
 import { useSelector } from 'react-redux';
 
 import { ThemeProvider } from '@material-ui/core/styles';
@@ -46,11 +49,15 @@ import NavigationScroll from './layout/NavigationScroll';
         );
     }
 }*/
+function getLibrary(provider) {
+    return new ethers.providers.Web3Provider(provider);
+}
 
 const App = () => {
     const customization = useSelector((state) => state.customization);
 
     return (
+        <Web3ReactProvider getLibrary={getLibrary}>
         <StyledEngineProvider injectFirst>
             <ThemeProvider theme={theme(customization)}>
                 <CssBaseline />
@@ -59,6 +66,7 @@ const App = () => {
                 </NavigationScroll>
             </ThemeProvider>
         </StyledEngineProvider>
+        </Web3ReactProvider>
     );
 };
 

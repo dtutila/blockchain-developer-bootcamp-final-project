@@ -77,8 +77,8 @@ const TotalIncomeLightCard = ({ isLoading }) => {
                             </ListItemAvatar>
                             <ListItemText
                                 sx={{
-                                    mt: 0.45,
-                                    mb: 0.45
+                                    mt: 0.0,
+                                    mb: 0.0
                                 }}
                                 className={classes.padding}
                                 primary={<Typography variant="h4">$203k</Typography>}
