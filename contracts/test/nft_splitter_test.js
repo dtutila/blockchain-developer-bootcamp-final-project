@@ -8,7 +8,7 @@ const ERC1155 = artifacts.require('ERC1155')
 const BN = require('bignumber.js');
 
 async function initTextContext(factoryContract, alice, aliceNFT, approveForAll) {
-    const splitterProxy = await factoryContract.createNFTSplitter(aliceNFT.address , {
+    const splitterProxy = await factoryContract.createNFTSplitter(aliceNFT.address, 1 , {
         from: alice,
     });
     const proxyAddress = splitterProxy.logs[0].args.proxyAddress;
@@ -57,7 +57,7 @@ contract('NFTSplitter', function (accounts) {
 
 
     it('NFT Owner should be able to create a new nft splitter proxy ', async function () {
-        const splitterProxy = await factoryContract.createNFTSplitter(aliceNFT.address , {
+        const splitterProxy = await factoryContract.createNFTSplitter(aliceNFT.address, 1 , {
 
             from: alice,
         });
@@ -84,6 +84,22 @@ contract('NFTSplitter', function (accounts) {
             adminContract.address,
             'Settings value should be sale as admin contract',
         );
+    });
+    it('NFT Splitter creation is not available when app is paused ', async function () {
+
+        await adminContract.pause( {from: owner});
+
+        try{
+            const splitterProxy = await factoryContract.createNFTSplitter(aliceNFT.address, 1 , {
+
+                from: alice,
+            });
+        }catch (error) {
+            assert(error);
+            assert.equal(error.reason, "NFTSplitterFactory: Factory is paused");
+        }
+        await adminContract.unpause( {from: owner});
+
     });
 
     it('NFT Owner should be able to split NFT ', async function () {

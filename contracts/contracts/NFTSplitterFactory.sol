@@ -9,6 +9,10 @@ contract NFTSplitterFactory {
   address private NFTSplitterBase;
   address[] private splitters;
 
+  modifier isNotPaused(){
+    require (!NFTSplitterAdmin(settings).isPaused(), 'NFTSplitterFactory: Factory is paused');
+    _;
+  }
     /**
      * @dev 
      */
@@ -24,8 +28,8 @@ contract NFTSplitterFactory {
     NFTSplitterBase = NFTSplitterAdmin(settings).getImplementation(); 
   }
 
-  function createNFTSplitter(address _nft) public payable returns (NFTSplitterProxy prx){
-    prx = new NFTSplitterProxy (_nft, msg.sender, NFTSplitterBase, settings, "");
+  function createNFTSplitter(address _nft, uint _tokenId) public payable isNotPaused returns (NFTSplitterProxy prx){
+    prx = new NFTSplitterProxy (_nft, _tokenId, msg.sender, NFTSplitterBase, settings, "");
     NFTSplitterAdmin(settings).registerProxy(_nft,  address(prx));
     splitters.push(address(prx));
     emit ProxyCreated(_nft, address(prx), msg.sender);
