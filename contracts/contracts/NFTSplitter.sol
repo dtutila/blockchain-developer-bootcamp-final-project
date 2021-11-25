@@ -340,4 +340,10 @@ contract NFTSplitter is
     function getBalance() public view returns (uint256) {
         return address(this).balance;
     }
+
+    /// @notice Withdraw any contract funds
+    /// @dev Only the original nft  owner execute call this function
+    function withdraw() public onlyOriginalNFTOwner{
+        //TODO: implement and create test for this scenario
+    }
 }

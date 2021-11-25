@@ -5,8 +5,8 @@ import {useWeb3React} from '@web3-react/core';
 const Factory = () => {
     const { chainId } = useWeb3React();
     const abi = factoryJSON.abi;
-
-    const address = '0x87D5644eB6d578eeA49409Cee1316833fc1ead62'; //factoryJSON.networks[chainId].address;// '0x4e454Fe262E43AdA42cB874f0419DCfb38d36329';
+    //TODO:remove hardcoded address
+    const address = '0xE3Ddd7f0198ed115E88b5941f6968e273e058457';
 
     return {abi, address};
 }
