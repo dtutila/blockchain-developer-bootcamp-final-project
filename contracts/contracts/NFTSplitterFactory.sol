@@ -7,7 +7,7 @@ contract NFTSplitterFactory {
   address private owner;
   address private settings;
   address private NFTSplitterBase;
-  mapping(address => NFTSplitterProxy) private splitters;
+  address[] private splitters;
 
     /**
      * @dev 
@@ -27,12 +27,17 @@ contract NFTSplitterFactory {
   function createNFTSplitter(address _nft) public payable returns (NFTSplitterProxy prx){
     prx = new NFTSplitterProxy (_nft, msg.sender, NFTSplitterBase, settings, "");
     NFTSplitterAdmin(settings).registerProxy(_nft,  address(prx));
+    splitters.push(address(prx));
     emit ProxyCreated(_nft, address(prx), msg.sender);
     return prx;
   }
 
   function getNFTSplitterBase() external view returns (address) {
     return NFTSplitterBase;
+  }
+
+  function getNFTSplitters() external view returns ( address[] memory ) {
+    return splitters;
   }
   
 }

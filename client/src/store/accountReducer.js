@@ -1,11 +1,10 @@
 // action - state management
-import { ACCOUNT_INITIALIZE, LOGIN, LOGOUT } from './actions';
+import { ACCOUNT_INITIALIZE, SPLITTERS_LOADED, SPLITTER_CREATED } from './actions';
 
 export const initialState = {
-    token: '',
-    isLoggedIn: false,
-    isInitialized: false,
-    user: null
+    address: '',
+    splitters: [],
+
 };
 
 //-----------------------|| ACCOUNT REDUCER ||-----------------------//
@@ -13,29 +12,27 @@ export const initialState = {
 const accountReducer = (state = initialState, action) => {
     switch (action.type) {
         case ACCOUNT_INITIALIZE: {
-            const { isLoggedIn, user, token } = action.payload;
+            const { account } = action.payload;
             return {
                 ...state,
-                isLoggedIn,
-                isInitialized: true,
-                token,
-                user
+                address: account
             };
         }
-        case LOGIN: {
-            const { user } = action.payload;
+        case SPLITTERS_LOADED: {
+            const { splitters } = action.payload;
+
             return {
                 ...state,
-                isLoggedIn: true,
-                user
+                splitters: splitters
             };
         }
-        case LOGOUT: {
+        case SPLITTER_CREATED: {
+            const { splitter } = action.payload;
+            const newList = [splitter, ...state.splitters]
+            console.log('newList', newList);
             return {
                 ...state,
-                isLoggedIn: false,
-                token: '',
-                user: null
+                splitters: newList
             };
         }
         default: {

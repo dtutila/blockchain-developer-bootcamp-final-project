@@ -7,21 +7,30 @@ import { Grid } from '@material-ui/core';
 import EarningCard from './EarningCard';
 import PopularCard from './PopularCard';
  import TotalOrderLineChartCard from './TotalOrderLineChartCard';
- import CreateSpitterCard from './CreateSplitterCard';
+ import CreateSplitterCard from './CreateSplitterCard';
 // import TotalIncomeDarkCard from './TotalIncomeDarkCard';
 // import TotalIncomeLightCard from './TotalIncomeLightCard';
 // import TotalGrowthBarChart from './TotalGrowthBarChart';
 import { gridSpacing } from './../../../store/constant';
 import TotalIncomeLightCard from './TotalIncomeLightCard';
+import {useSelector} from 'react-redux';
+import {useSplitterFactory} from '../../../hooks/useSplitterFactory';
+import SplitterCard from './SplitterCard';
 
 //-----------------------|| DEFAULT DASHBOARD ||-----------------------//
 
 const Dashboard = () => {
+    const account = useSelector((state) => state.account);
+    const { splitters } = account;
+
     const [isLoading, setLoading] = useState(true);
+    const { getSplitters } = useSplitterFactory();
     useEffect(() => {
         setLoading(false);
+        getSplitters();
     }, []);
 
+    console.log('DASHBOARD: splitters', splitters, splitters.length | 0);
     return (
         <Grid container spacing={gridSpacing}>
             <Grid item xs={12}>
@@ -29,7 +38,7 @@ const Dashboard = () => {
                 <Grid container spacing={gridSpacing}>
 
                     <Grid item lg={6} md={6} sm={6} xs={12}>
-                        <CreateSpitterCard isLoading={isLoading} />
+                        <SplitterCard isLoading={isLoading} split={{nftAddress: '0x49c9A0F3dF30ff3b8431c2a458E7E4fb72B7C466', tokenId: '1', name: '', splitterAddress: '0x949f7D8A4C7d0C8c57Ace918f238C2B662a3aA6d'}}/>
                         {/*<EarningCard isLoading={isLoading} />*/}
                     </Grid>
                     <Grid item lg={4} md={6} sm={6} xs={12}>

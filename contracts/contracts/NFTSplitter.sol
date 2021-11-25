@@ -175,12 +175,7 @@ contract NFTSplitter is
         uint256 id,
         uint256 value
     ) public virtual {
-        require(
-            account == _msgSender() || isApprovedForAll(account, _msgSender()),
-            "NFTSplitter: caller is not owner nor approved"
-        );
-
-        _burn(account, id, value);
+        revert("Function not implemented");
     }
 
     function burnBatch(
@@ -188,12 +183,7 @@ contract NFTSplitter is
         uint256[] memory ids,
         uint256[] memory values
     ) public virtual {
-        require(
-            account == _msgSender() || isApprovedForAll(account, _msgSender()),
-            "NFTSplitter: caller is not owner nor approved"
-        );
-
-        _burnBatch(account, ids, values);
+        revert("Function not implemented");
     }
 
     /**
@@ -303,7 +293,7 @@ contract NFTSplitter is
      * This method can only be executed if the address owns all the pieces.
      *
      */
-    event log(address currentOwner, uint amount);
+   // event log(address currentOwner, uint amount);
     function withdrawOriginalNFT() public ownsAllPieces {
 
         //require(pieces == ownedPieces, 'NFTSplitter: you should own all pieces to withdraw the original NFT');

@@ -2,16 +2,22 @@ import { useContract } from './useContract';
 
 import useIsValidNetwork from '../hooks/useIsValidNetwork';
 import { useWeb3React } from '@web3-react/core';
-
+import { useDispatch, useSelector } from 'react-redux';
 import { formatUnits, parseEther } from '@ethersproject/units';
 import { useEffect } from 'react';
-import factory  from '../abi/factory';
+
+import getFactory from '../abi/factory';
+import {SPLITTER_CREATED, SPLITTERS_LOADED} from '../store/actions';
+
 
 export const useSplitterFactory = () => {
   const { account } = useWeb3React();
   const { isValidNetwork } = useIsValidNetwork();
-
-  const factoryContract = useContract(factory.address, factory.abi);
+  const {address, abi} = getFactory();
+  const factoryContract = useContract(address, abi);
+  const dispatcher = useDispatch();
+  const user = useSelector((state) => state.account);
+  const { splitters } = user;
 
 
   // const fetchCTokenBalance = async () => {
@@ -19,19 +25,28 @@ export const useSplitterFactory = () => {
   //   setCTokenBalance(formatUnits(cTokenBalance, 8));
   // };
 
-  // const getCTokenExchangeRate = async () => {
-  //   try {
-  //     let exchangeRateCurrent = await cTokenContract.callStatic.exchangeRateCurrent();
-  //     exchangeRateCurrent = exchangeRateCurrent / Math.pow(10, 18 + 18 - 8);
-  //     setExchangeRate(exchangeRateCurrent);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
+  const getSplitters = async () => {
+    try {
+      if (account && isValidNetwork) {
+        console.log('loading splitters');
+        let splitters = await factoryContract.getNFTSplitters();
+        console.log('initial splitters ->', splitters);
+        dispatcher({
+          type: SPLITTERS_LOADED,
+          payload: {splitters: ['TEST']}
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const createSplitter = async (nftAddress) => {
     console.log('account', account);
+    console.log('splitters', splitters);
+    console.log('user', user);
     console.log('isValidNetwork', isValidNetwork);
+    let splitterAddress = '';
     if (account && isValidNetwork) {
       try {
       //  setTxnStatus('LOADING');
@@ -39,8 +54,18 @@ export const useSplitterFactory = () => {
         const txn = await factoryContract.createNFTSplitter(nftAddress, {
           from: account
         });
-        await txn.wait(1);
-        console.log('done');
+         txn.wait(1).then(
+             res => {
+               splitterAddress = res.events.filter(x => x.event && x.event === 'ProxyCreated')[0].args[1];
+               console.log('splitterAddress', splitterAddress);
+               dispatcher({
+                 type: SPLITTER_CREATED,
+                 payload: { splitter:  splitterAddress}
+               });
+             }
+         );
+
+        console.log('done', txn);
         //await fetchCTokenBalance();
         //setTxnStatus('COMPLETE');
       } catch (error) {
@@ -57,6 +82,7 @@ export const useSplitterFactory = () => {
   }, [account]);*/
 
   return {
+    getSplitters,
     createSplitter
   };
 };

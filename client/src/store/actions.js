@@ -2,7 +2,8 @@
 export const LOGIN = 'LOGIN';
 export const LOGOUT = 'LOGOUT';
 export const ACCOUNT_INITIALIZE = 'ACCOUNT_INITIALIZE';
-
+export const SPLITTER_CREATED = 'SPLITTER_CREATED';
+export const SPLITTERS_LOADED = 'SPLITTERS_LOADED';
 // action - customization reducer
 export const SET_MENU = '@customization/SET_MENU';
 export const MENU_OPEN = '@customization/MENU_OPEN';

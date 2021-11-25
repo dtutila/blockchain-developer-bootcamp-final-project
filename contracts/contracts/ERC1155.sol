@@ -396,7 +396,7 @@ contract ERC1155 is Context, ERC165, IERC1155, IERC1155MetadataURI {
      * - `from` and `to` are never both zero.
      * - `ids` and `amounts` have the same, non-zero length.
      *
-     * To learn more about hooks, head to xref:ROOT:extending-contracts.adoc#using-hooks[Using Hooks].
+     * To learn more about hooks, head to xref:ROOT:extending-contracts_old.adoc#using-hooks[Using Hooks].
      */
     function _beforeTokenTransfer(
         address operator,

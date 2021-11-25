@@ -154,7 +154,7 @@ const MetamaskSection = () => {
                         color="inherit"
                     />
                 }
-                label={account}
+                label={account ? account : 'Connect'}
                 variant="outlined"
                 ref={anchorRef}
                 onClick={connectWallet}
