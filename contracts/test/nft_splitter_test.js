@@ -415,8 +415,29 @@ contract('NFTSplitter (Base contract)', function (accounts) {
         assert.equal(finalBobBalance, 0, 'Bob should own 0 token');
         assert.equal(nftBalance, tokensToCreate, `Alice should own ${tokensToCreate} tokens from her original NFT`);
 
-
     });
 
+    it('16- All pieces Owner can withdraw all tokens from splitter', async function () {
+        const { proxyAddress, splitter} = await initTextContext(factoryContract, alice, aliceNFT, true);
+        const unitPrice = new BN(web3.utils.toWei('0.5', 'ether'));
+        await splitter.splitMyNFT( tokenId, unitPrice, 10, 8,  {
+            from: alice,
+        });
+        //simulating an airdrop to proxy address
+        await aliceNFT.mint(proxyAddress, tokenId, tokensToCreate, '0x0000', {from: alice});
+
+
+        await splitter.withdrawOriginalNFT({from: alice});
+
+        const finalAliceBalance = await splitter.balanceOf.call(alice, tokenId)
+        const finalBobBalance = await splitter.balanceOf.call(bob, tokenId)
+        const nftBalance = await aliceNFT.balanceOf.call(alice, tokenId)
+
+        assert.equal(finalAliceBalance, 0, 'Alice should have 0 tokens');
+        assert.equal(finalBobBalance, 0, 'Bob should own 0 token');
+        assert.equal(nftBalance, tokensToCreate * 2 , `Alice should own ${tokensToCreate * 2} tokens from her original NFT`);
+
+
+    });
 
 })

@@ -88,8 +88,7 @@ contract NFTSplitter is
      */
     event NFTWithdraw(
         address indexed originalNFTAddress,
-        address indexed buyer,
-        uint  amount
+        address indexed buyer
 
     );
     /**
@@ -294,19 +293,14 @@ contract NFTSplitter is
     function withdrawOriginalNFT() public ownsAllPieces nonReentrant {
          //burn pieces
         _burn(msg.sender, tokenId, pieces);
-        //require(pieces == ownedPieces, 'NFTSplitter: you should own all pieces to withdraw the original NFT');
-        uint256 amount = ERC1155(originalNFT).balanceOf(address(this), tokenId);
         ERC1155(originalNFT).safeTransferFrom(
             address(this),
             msg.sender,
             tokenId,
-            amount,
+            ERC1155(originalNFT).balanceOf(address(this), tokenId), //sending all tokens that proxy owns, aridrops??
             ""
         );
-
-
-        emit NFTWithdraw(originalNFT, msg.sender, amount);
-
+        emit NFTWithdraw(originalNFT, msg.sender);
     }
 
     function onERC1155Received(
