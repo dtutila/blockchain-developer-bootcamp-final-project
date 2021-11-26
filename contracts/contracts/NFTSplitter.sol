@@ -19,20 +19,14 @@ contract NFTSplitter is
     //modifiers
     /**
      * @dev Modifier that checks that timestamp is greater than lock time
-     *
+     * TODO: immplement lock logic in contract
      */
     modifier isNotLocked() {
         require(block.timestamp > lockEndDate, "NFTSplitter: Lock time is not over");
         _;
     }
 
-    modifier allowToBuy() {
-        if (block.timestamp < lockEndDate){
-            require(owners[originalOwner] < initialSellSupply, "NFTSplitter: No more supply");
-        } 
-                
-        _;
-    }
+
 
     /**
      * @dev Modifier that checks that only the original NFT owner can execute the trx
@@ -58,7 +52,7 @@ contract NFTSplitter is
      */
     modifier ownsAllPieces() {
 
-        require(balanceOf(msg.sender, 1) == pieces, "NFTSplitter: you should own all pieces to withdraw the original NFT");
+        require(balanceOf(msg.sender, tokenId) == pieces, "NFTSplitter: you should own all pieces to withdraw the original NFT");
         _;
     }
 
@@ -175,12 +169,7 @@ contract NFTSplitter is
         uint256 id,
         uint256 value
     ) public virtual {
-        require(
-            account == _msgSender() || isApprovedForAll(account, _msgSender()),
-            "NFTSplitter: caller is not owner nor approved"
-        );
-
-        _burn(account, id, value);
+        revert("Function not implemented");
     }
 
     function burnBatch(
@@ -188,12 +177,7 @@ contract NFTSplitter is
         uint256[] memory ids,
         uint256[] memory values
     ) public virtual {
-        require(
-            account == _msgSender() || isApprovedForAll(account, _msgSender()),
-            "NFTSplitter: caller is not owner nor approved"
-        );
-
-        _burnBatch(account, ids, values);
+        revert("Function not implemented");
     }
 
     /**
@@ -223,8 +207,15 @@ contract NFTSplitter is
         uint8 _initialSellAmount,
         uint256 _lockTimeInDays
     ) public onlyOriginalNFTOwner {
-        lockEndDate = block.timestamp + (_lockTimeInDays * 1 days);
-      //  originalNFT = _originalNFTAddress;
+        require (NFTPrice == 0, 'NFTSplitter: splitter already created' );
+        require(_price > 0, 'NFTSplitter: invalid price');
+        require(_pieces > 0, 'NFTSplitter: invalid pieces' );
+        require(_buyPercentage > 0, 'NFTSplitter: invalid percentage ' );
+
+        //TODO: implement lock logic
+        //TODO: implement logic to not allow to sell more than initialSellSupply during lock time
+        //lockEndDate = block.timestamp + (_lockTimeInDays * 1 days);
+
         originalOwner = msg.sender;
         initialSellSupply = _initialSellAmount;
         name = string(abi.encodePacked("NFT Splitter - ", ERC1155(originalNFT).name()));
@@ -244,9 +235,6 @@ contract NFTSplitter is
             amount,
             ""
         );
-        owners[msg.sender] = amount;
-        //setting the owners
-
 
         emit NFTSplit(originalNFT, tokenId, pieces, NFTPrice, buyPercentage, lockEndDate, name);
     }
@@ -257,7 +245,7 @@ contract NFTSplitter is
      */
 
     function buyBackPieces(address _from, uint256 amount) public payable onlyOriginalNFTOwner {
-        uint currentBalance = balanceOf(_from, 1);
+        uint currentBalance = balanceOf(_from, tokenId);
 
        // require (currentBalance > 0 && currentBalance >= amount, 'NFTSplitter: not enough pieces to buy back');
        
@@ -266,7 +254,7 @@ contract NFTSplitter is
         uint buyBackPrice = (piecePrice + (piecePrice * buyPercentage  / 100 )) * amount;
         require(msg.value  >= piecePrice, 'NFTSplitter: insufficient value for this transaction');
 
-        safeTransferFrom(_from, msg.sender, 1, amount, "");
+        safeTransferFrom(_from, msg.sender, tokenId, amount, "");
         (bool sent, bytes memory data) = _from.call{value: buyBackPrice}("");
 
         require(sent, "Failed to send Ether");
@@ -281,8 +269,8 @@ contract NFTSplitter is
      */
 
     function buyPiecesFromOwner( uint256 amount) public payable notOriginalNFTOwner {
-        uint currentSupply = balanceOf(originalOwner, 1);
-        require(currentSupply - initialSellSupply >= amount, 'NFTSplitter: not enough pieces to buy');
+        uint currentSupply = balanceOf(originalOwner, tokenId);
+        require(currentSupply  >= amount, 'NFTSplitter: not enough pieces to buy');
 
         require(originalOwner != msg.sender, 'NFTSplitter: you are the current nft owner');
 
@@ -291,7 +279,7 @@ contract NFTSplitter is
         require(msg.value >= piecePrice, 'NFTSplitter: not enough value to buy pieces');
 
       //  ERC1155(address(this)).setApprovalForAll(buyer, true);
-        safeTransferFrom(originalOwner, msg.sender, 1, amount, "");
+        safeTransferFrom(originalOwner, msg.sender, tokenId, amount, "");
         (bool sent, bytes memory data) = originalOwner.call{value: msg.value}("");
 
         emit NFTSplitSold(originalOwner, msg.sender, amount, piecePrice);
@@ -303,9 +291,10 @@ contract NFTSplitter is
      * This method can only be executed if the address owns all the pieces.
      *
      */
-    event log(address currentOwner, uint amount);
+   // event log(address currentOwner, uint amount);
     function withdrawOriginalNFT() public ownsAllPieces {
 
+        NFTPrice = 0;
         //require(pieces == ownedPieces, 'NFTSplitter: you should own all pieces to withdraw the original NFT');
         uint256 amount = ERC1155(originalNFT).balanceOf(address(this), tokenId);
         ERC1155(originalNFT).safeTransferFrom(
@@ -316,7 +305,8 @@ contract NFTSplitter is
             ""
         );
         //burn pieces
-        _burn(msg.sender, 1, pieces);
+        _burn(msg.sender, tokenId, pieces);
+
         emit NFTWithdraw(originalNFT, msg.sender, amount);
 
     }
@@ -349,5 +339,11 @@ contract NFTSplitter is
 
     function getBalance() public view returns (uint256) {
         return address(this).balance;
+    }
+
+    /// @notice Withdraw any contract funds
+    /// @dev Only the original nft  owner execute call this function
+    function withdraw() public onlyOriginalNFTOwner{
+        //TODO: implement and create test for this scenario
     }
 }

@@ -52,6 +52,11 @@ module.exports = {
      port: 8545,            // Standard Ethereum port (default: none)
      network_id: "*",       // Any network (default: none)
     },
+    ganache: {
+      host: "127.0.0.1",     // Localhost (default: none)
+      port: 7545,            // Standard Ethereum port (default: none)
+      network_id: "*",       // Any network (default: none)
+    },
     rinkeby: {
       provider: () => new HDWalletProvider(mnemonic, infuraURL+infuraKey),
       network_id: 4,       // Network's id
@@ -111,7 +116,7 @@ module.exports = {
   // false to enabled: true. The default storage location can also be
   // overridden by specifying the adapter settings, as shown in the commented code below.
   //
-  // NOTE: It is not possible to migrate your contracts to truffle DB and you should
+  // NOTE: It is not possible to migrate your contracts_old to truffle DB and you should
   // make a backup of your artifacts to a safe location before enabling this feature.
   //
   // After you backed up your artifacts you can utilize db by running migrate as follows: 

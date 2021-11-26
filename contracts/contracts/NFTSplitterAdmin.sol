@@ -1,6 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.22 <0.9.0;
+/**
+ * @notice this is where the settings of de app are storage
+ * @dev it acts as eternal storage for the settings and can be use to update the contract with the base logic
 
+*/
 contract NFTSplitterAdmin {
     bytes32 public constant PAUSED = keccak256("ADMIN_PAUSED");
     bytes32 public constant NFTSPLITTER_ADDRESS = keccak256("NFTSPLITTER_ADDRESS");
@@ -44,15 +48,21 @@ contract NFTSplitterAdmin {
         addressStorage[_key] = _value;
     }
 
+    /**
+      * @notice only factory and owner can execute this function
+      * @dev registers a proxy in the settings
+      *
+     */
     function registerProxy(address _nft, address _proxy)
     external
-    onlyOwnerOrFactory
+    onlyFactory
     {
         boolStorage[keccak256(abi.encodePacked(PROXY, _nft, _proxy))] = true;
         emit ProxyRegistered (_proxy, _nft);
 
     }
 
+    //registering factory contract in settings
     function registerFactory(address _value)
     external
     onlyOwner
@@ -60,6 +70,11 @@ contract NFTSplitterAdmin {
         addressStorage[FACTORY_ADDRESS]= _value;
     }
 
+    /**
+       * @notice  validates if a proxy was created using creation function in the factory contract
+      * @dev only registered proxies can execute some functions in the base contract
+      *
+     */
     function isValidProxy(address _nft, address proxyAddress)
     external
     returns (bool)
