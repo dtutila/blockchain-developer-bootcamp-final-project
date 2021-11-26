@@ -8,7 +8,7 @@ In the other hand, Bob wants to buy Alice's NFT but as she is not selling it in 
 
 ## Problems
 * Alice does not want to contact Bob when she is ready to buy back Bob's NFT part.
-* Bob wans to receive a little more in return of selling back his NFT part to Alice.
+* Bob wants to receive a little more in return of selling back his NFT part to Alice.
 * Bob also wants the possibility of buy 100%  of Alice's NFT
 
 
@@ -21,9 +21,9 @@ Alice will be able to buy any NFT piece without any time restriction but she wil
 
 Bob will be able to buy more pieces or all the pieces after the lock time is over, 15 days in this case.
 
-Any one who owns all the pieces will be able to assemble the original NFT.
+Anyone who owns all the pieces will be able to assemble the original NFT.
 
-## Propossed solution
+## Proposed solution
 To build a decentralized app to allow users to shatter/split a NFT and trade the pieces inside the app. 
 
 ## Workflow example
@@ -32,14 +32,14 @@ To build a decentralized app to allow users to shatter/split a NFT and trade the
 
 1- Alice splits a NFT in 4 parts.
 
-2- Alice assings an initial list price for her NFT (each part will cost: number of parts / list price )
+2- Alice assigns an initial list price for her NFT (each part will cost: number of parts / list price )
 
-3- Alice stablishs an extra percentage she will be willing to pay to buy any part of the original NFT back
+3- Alice enters an extra percentage she will be willing to pay to buy any part of the original NFT back
 
-4- Alice will set up a lock time of 15 days in wich a buyer will not be able to buy any other part after the initial purchase.
+4- Alice will set up a lock time of 15 days in which a buyer will not be able to buy any other part after the initial purchase.
 
 5- Bob is interested to buy Alice's NFT so he buys one part.
 
-6- Bob waits untill the  lock time is over to buy more parts.
+6- Bob waits until the  lock time is over to buy more parts.
 
 7- Once Bob owns all the NFT parts, he will be able to transfer the ownership to his account.
