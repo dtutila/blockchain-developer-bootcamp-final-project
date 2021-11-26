@@ -25,6 +25,7 @@ contract NFTSplitterProxy is NFTSplitterStorage, Proxy {
         settings = _settings;
         implementation = _logic;
         name = "proxy";
+        symbol = "PRX";
         originalOwner = _owner;
         originalNFT = _nft;
         tokenId = _tokenId;

@@ -46,13 +46,13 @@ export const useSplitterContract = (splitterAddress) => {
     return { name, price, pieces, percentage }
   };
 
-  const splitMyNFT = async (tokenId, price, percentage, pieces, initialSupply, lockTime) => {
+  const splitMyNFT = async (tokenId, price, percentage, pieces) => {
     try {
       if (account && isValidNetwork) {
         setTxnStatus('LOADING');
         console.log('loading splitMyNFT ===> ', parseEther(price).toString());
 
-        const trx = await splitterContract.splitMyNFT(tokenId, parseEther(price), percentage, pieces, initialSupply, lockTime, {
+        const trx = await splitterContract.splitMyNFT(tokenId, parseEther(price), percentage, pieces,  {
           from: account
         });
         trx.wait(1).then(
