@@ -7,10 +7,12 @@ import { formatUnits, parseEther } from '@ethersproject/units';
 import { useEffect } from 'react';
 
 import getNFT from '../abi/nft';
-import {SPLITTER_CREATED, SPLITTERS_LOADED} from '../store/actions';
+
+import {useAppContext} from '../AppContext';
 
 
 export const useNFT = (nftAddress) => {
+  const {  setTxnStatus } = useAppContext();
   const { account } = useWeb3React();
   const { isValidNetwork } = useIsValidNetwork();
   const {abi} = getNFT();
@@ -48,6 +50,7 @@ export const useNFT = (nftAddress) => {
     try {
       if (account && isValidNetwork) {
         console.log('approving');
+        setTxnStatus('LOADING');
         const trx =  await nftContract.setApprovalForAll(splitterAddress, true, {
           from: account
         });
@@ -63,9 +66,10 @@ export const useNFT = (nftAddress) => {
         );
         console.log('approved done');
 
-
+        setTxnStatus('COMPLETE');
       }
     } catch (error) {
+      setTxnStatus('ERROR');
       console.log(error);
     }
 

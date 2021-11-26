@@ -35,7 +35,7 @@ const Button = styled.button`
   font-size: 1em;
   margin: 1em;
   padding: 0.25em 1em;
-  border: 2px solid palevioletred;
+  border: 2px solid ;
   border-radius: 3px;
 `;
 
@@ -63,9 +63,9 @@ const SplitterCard = () => {
       <Container show>
         <Card style={{ maxWidth: 420, minHeight: 400 }}>
           <Text block center className="mb-5">
-            Txn Was successful!
+            Transaction was successful!
           </Text>
-          <Button onClick={() => setTxnStatus('NOT_SUBMITTED')}>Go Back</Button>
+          <Button onClick={() => setTxnStatus('NOT_SUBMITTED')}>OK</Button>
         </Card>
       </Container>
     );

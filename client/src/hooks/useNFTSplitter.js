@@ -7,15 +7,15 @@ import { formatUnits, parseEther } from '@ethersproject/units';
 import { useEffect } from 'react';
 
 import getSplitter from '../abi/nftsplitter';
-import {SPLITTER_CREATED, SPLITTERS_LOADED} from '../store/actions';
+import {useAppContext} from '../AppContext';
 
 
 export const useSplitterContract = (splitterAddress) => {
+  const {  setTxnStatus } = useAppContext();
   const { account } = useWeb3React();
   const { isValidNetwork } = useIsValidNetwork();
   const { abi} = getSplitter();
   const splitterContract = useContract(splitterAddress, abi);
-  const dispatcher = useDispatch();
   let name = '';
   let pieces = '';
   let price = '';
@@ -49,24 +49,24 @@ export const useSplitterContract = (splitterAddress) => {
   const splitMyNFT = async (tokenId, price, percentage, pieces, initialSupply, lockTime) => {
     try {
       if (account && isValidNetwork) {
-        console.log('loading splitters');
-        const trx = await splitterContract.splitMyNFT(tokenId, price, percentage, pieces, initialSupply, lockTime, {
+        setTxnStatus('LOADING');
+        console.log('loading splitMyNFT ===> ', parseEther(price).toString());
+
+        const trx = await splitterContract.splitMyNFT(tokenId, parseEther(price), percentage, pieces, initialSupply, lockTime, {
           from: account
         });
         trx.wait(1).then(
             res => {
 
-              console.log('approve nft ->', res);
-              /* dispatcher({
-                 type: SPLITTER_CREATED,
-                 payload: { splitter:  splitterAddress}
-               });*/
+              console.log('splitMyNFT nft ->', res);
+
             }
         );
 
-
+        setTxnStatus('COMPLETE');
       }
     } catch (error) {
+      setTxnStatus('ERROR');
       console.log(error);
     }
   };
@@ -74,6 +74,7 @@ export const useSplitterContract = (splitterAddress) => {
   const buyBackPieces = async (from, amount, paymentAmount) => {
     try {
       if (account && isValidNetwork) {
+        setTxnStatus('LOADING');
         console.log('buyBackPieces');
         const trx = await splitterContract.splitMyNFT(from, amount, {
           from: account,
@@ -90,9 +91,10 @@ export const useSplitterContract = (splitterAddress) => {
             }
         );
 
-
+        setTxnStatus('COMPLETE');
       }
     } catch (error) {
+      setTxnStatus('ERROR');
       console.log(error);
     }
   };
@@ -100,8 +102,9 @@ export const useSplitterContract = (splitterAddress) => {
   const buyPiecesFromOwner = async ( amount, paymentAmount) => {
     try {
       if (account && isValidNetwork) {
-        console.log('buyPiecesFromOwner');
-        const trx = await splitterContract.buyPiecesFromOwner(from, amount, {
+        setTxnStatus('LOADING');
+        console.log('buyPiecesFromOwner -> ', amount, parseEther(paymentAmount));
+        const trx = await splitterContract.buyPiecesFromOwner( amount, {
           from: account,
           value: parseEther(paymentAmount)
         });
@@ -115,8 +118,10 @@ export const useSplitterContract = (splitterAddress) => {
                });*/
             }
         );
+        setTxnStatus('COMPLETE');
       }
     } catch (error) {
+      setTxnStatus('ERROR');
       console.log(error);
     }
   };
@@ -138,8 +143,10 @@ export const useSplitterContract = (splitterAddress) => {
                });*/
             }
         );
+        setTxnStatus('COMPLETE');
       }
     } catch (error) {
+      setTxnStatus('ERROR');
       console.log(error);
     }
   };
