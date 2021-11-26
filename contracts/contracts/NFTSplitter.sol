@@ -1,16 +1,18 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.4.22 <0.9.0;
-import "./ERC1155.sol";
-import "./NFTSplitterStorage.sol";
 import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
+import "./ERC1155.sol";
+import "./NFTSplitterStorage.sol";
 import  "./NFTSplitterAdmin.sol";
 
 contract NFTSplitter is
     NFTSplitterStorage,
     ERC165,
     ERC1155,
-    IERC1155Receiver
+    IERC1155Receiver,
+    ReentrancyGuard
 {
    // bytes4 internal constant ERC1155_RECEIVED_SIG = 0xf23a6e61;
    // bytes4 internal constant ERC1155_BATCH_RECEIVED_SIG = 0xbc197c81;
@@ -25,8 +27,6 @@ contract NFTSplitter is
         require(block.timestamp > lockEndDate, "NFTSplitter: Lock time is not over");
         _;
     }
-
-
 
     /**
      * @dev Modifier that checks that only the original NFT owner can execute the trx
@@ -55,7 +55,6 @@ contract NFTSplitter is
         require(balanceOf(msg.sender, tokenId) == pieces, "NFTSplitter: you should own all pieces to withdraw the original NFT");
         _;
     }
-
 
     /**
      * @dev 
@@ -212,6 +211,11 @@ contract NFTSplitter is
         require(_pieces > 0, 'NFTSplitter: invalid pieces' );
         require(_buyPercentage > 0, 'NFTSplitter: invalid percentage ' );
 
+        NFTPrice = _price;
+        tokenId = _tokenId;
+        pieces = _pieces;
+        buyPercentage = _buyPercentage;
+
         //TODO: implement lock logic
         //TODO: implement logic to not allow to sell more than initialSellSupply during lock time
         //lockEndDate = block.timestamp + (_lockTimeInDays * 1 days);
@@ -221,10 +225,7 @@ contract NFTSplitter is
         name = string(abi.encodePacked("NFT Splitter - ", ERC1155(originalNFT).name()));
         symbol = string(abi.encodePacked("NS", ERC1155(originalNFT).symbol()));
        
-        tokenId = _tokenId;
-        pieces = _pieces;
-        NFTPrice = _price;
-        buyPercentage = _buyPercentage;
+
 
         uint256 amount = ERC1155(originalNFT).balanceOf(msg.sender, tokenId);
         _mint(msg.sender, tokenId, pieces, "");
@@ -244,7 +245,7 @@ contract NFTSplitter is
      *
      */
 
-    function buyBackPieces(address _from, uint256 amount) public payable onlyOriginalNFTOwner {
+    function buyBackPieces(address _from, uint256 amount) public payable onlyOriginalNFTOwner nonReentrant {
         uint currentBalance = balanceOf(_from, tokenId);
 
        // require (currentBalance > 0 && currentBalance >= amount, 'NFTSplitter: not enough pieces to buy back');
@@ -254,7 +255,7 @@ contract NFTSplitter is
         uint buyBackPrice = (piecePrice + (piecePrice * buyPercentage  / 100 )) * amount;
         require(msg.value  >= piecePrice, 'NFTSplitter: insufficient value for this transaction');
 
-        safeTransferFrom(_from, msg.sender, tokenId, amount, "");
+        _safeTransferFrom(_from, msg.sender, tokenId, amount, "");
         (bool sent, bytes memory data) = _from.call{value: buyBackPrice}("");
 
         require(sent, "Failed to send Ether");
@@ -268,7 +269,7 @@ contract NFTSplitter is
      *
      */
 
-    function buyPiecesFromOwner( uint256 amount) public payable notOriginalNFTOwner {
+    function buyPiecesFromOwner( uint256 amount) public payable notOriginalNFTOwner nonReentrant {
         uint currentSupply = balanceOf(originalOwner, tokenId);
         require(currentSupply  >= amount, 'NFTSplitter: not enough pieces to buy');
 
@@ -279,7 +280,7 @@ contract NFTSplitter is
         require(msg.value >= piecePrice, 'NFTSplitter: not enough value to buy pieces');
 
       //  ERC1155(address(this)).setApprovalForAll(buyer, true);
-        safeTransferFrom(originalOwner, msg.sender, tokenId, amount, "");
+        _safeTransferFrom(originalOwner, msg.sender, tokenId, amount, "");
         (bool sent, bytes memory data) = originalOwner.call{value: msg.value}("");
 
         emit NFTSplitSold(originalOwner, msg.sender, amount, piecePrice);
@@ -292,9 +293,9 @@ contract NFTSplitter is
      *
      */
    // event log(address currentOwner, uint amount);
-    function withdrawOriginalNFT() public ownsAllPieces {
-
-        NFTPrice = 0;
+    function withdrawOriginalNFT() public ownsAllPieces nonReentrant {
+         //burn pieces
+        _burn(msg.sender, tokenId, pieces);
         //require(pieces == ownedPieces, 'NFTSplitter: you should own all pieces to withdraw the original NFT');
         uint256 amount = ERC1155(originalNFT).balanceOf(address(this), tokenId);
         ERC1155(originalNFT).safeTransferFrom(
@@ -304,8 +305,7 @@ contract NFTSplitter is
             amount,
             ""
         );
-        //burn pieces
-        _burn(msg.sender, tokenId, pieces);
+
 
         emit NFTWithdraw(originalNFT, msg.sender, amount);
 

@@ -342,7 +342,7 @@ contract('NFTSplitter (Base contract)', function (accounts) {
     it('13- NFT Owner can withdraw NFT after buying back all pieces', async function () {
         const {proxyAddress, splitter} = await initTextContext(factoryContract, alice, aliceNFT, true);
         const price = new BN(web3.utils.toWei('0.5', 'ether'));
-        await splitter.splitMyNFT( tokenId, price, 10, 8, 4, 15, {
+        await splitter.splitMyNFT( tokenId, price, 10, 8, 8, 15, {
             from: alice,
         });
         const onePieceValue = price.dividedBy(8) ;

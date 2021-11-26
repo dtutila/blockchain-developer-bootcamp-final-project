@@ -12,7 +12,7 @@ contract NFTSplitterProxy is NFTSplitterStorage, Proxy {
     string public symbol;
 
     address private implementation;
-   // address private settings;
+
 
     constructor(
         address _nft,
