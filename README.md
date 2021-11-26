@@ -1,4 +1,5 @@
-# NFT Splitter (~~or how to sell my NFT slowly~~)
+# Blockchain Developer Bootcamp Final Project
+## NFT Splitter 
 
 A contract that allows the user to divide a NFT into multiple pieces.
 
