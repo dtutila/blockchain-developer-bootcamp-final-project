@@ -14,12 +14,13 @@ import useTransaction from '../../hooks/useTransaction';
 import FieldInput from '../../components/FieldInput';
 import { colors } from '../../theme';
 import {useSplitterFactory} from '../../hooks/useSplitterFactory';
+import {useHistory} from 'react-router-dom';
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding-top: 100px;
+  padding-top: 20px;
   -webkit-box-align: center;
   align-items: center;
   flex: 1 1 0%;
@@ -43,15 +44,19 @@ const SplitterCard = () => {
   const [nftAddress, setNFTAddress] = useState('');
   const [tokenId, setTokenId] = useState('');
   const { createSplitter } = useSplitterFactory();
+  const history = useHistory();
 
   const { txnStatus, setTxnStatus } = useTransaction();
   const handleCreationSubmit = () => createSplitter(nftAddress, tokenId);
-
+ const successHandler = () => {
+   setTxnStatus('NOT_SUBMITTED');
+   history.push(`/nft/${nftAddress}/${tokenId}`);
+ }
 
   if (txnStatus === 'LOADING') {
     return (
       <Container show>
-        <Card style={{ maxWidth: 420, minHeight: 400 }}>
+        <Card style={{ maxWidth: 420, minHeight: 300 }}>
           <Spinner animation="border" role="status" className="m-auto" />
         </Card>
       </Container>
@@ -61,11 +66,11 @@ const SplitterCard = () => {
   if (txnStatus === 'COMPLETE') {
     return (
       <Container show>
-        <Card style={{ maxWidth: 420, minHeight: 400 }}>
+        <Card style={{ maxWidth: 420, minHeight: 300 }}>
           <Text block center className="mb-5">
             Transaction was successful!
           </Text>
-          <Button onClick={() => setTxnStatus('NOT_SUBMITTED')}>OK</Button>
+          <Button primary onClick={successHandler}>Continue</Button>
         </Card>
       </Container>
     );
@@ -74,7 +79,7 @@ const SplitterCard = () => {
   if (txnStatus === 'ERROR') {
     return (
       <Container show>
-        <Card style={{ maxWidth: 420, minHeight: 400 }}>
+        <Card style={{ maxWidth: 420, minHeight: 300 }}>
           <Text>Txn ERROR</Text>
           <Button onClick={() => setTxnStatus('NOT_SUBMITTED')}>Go Back</Button>
         </Card>
@@ -83,7 +88,7 @@ const SplitterCard = () => {
   }
   return (
     <Container show>
-      <Card style={{ maxWidth: 420, minHeight: 400 }}>
+      <Card style={{ maxWidth: 420, minHeight: 300 }}>
         <Text bold block t2 color={colors.primary_light} className="mb-3">
           Create a new Splitter
         </Text>

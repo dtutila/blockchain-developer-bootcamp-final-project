@@ -62,7 +62,7 @@ contract('NFTSplitter (Base contract)', function (accounts) {
     })
 
 
-    it('01- NFT Owner should be able to create a new nft splitter proxy ', async function () {
+    it('01- NFT Owner should be able to create a new NFT splitter proxy ', async function () {
         const splitterProxy = await factoryContract.createNFTSplitter(aliceNFT.address, tokenId , {
 
             from: alice,
@@ -83,8 +83,8 @@ contract('NFTSplitter (Base contract)', function (accounts) {
 
         assert.equal(alice, originalOwner, 'Alice should be the proxy owner');
 
-        assert.equal(name, 'NFT Splitter', 'Initial proxy nft name should be proxy');
-        assert.equal(proxyName, 'proxy', 'Initial proxy nft name should be proxy');
+        assert.equal(name, 'NFT Splitter', 'Initial proxy NFT name should be proxy');
+        assert.equal(proxyName, 'proxy', 'Initial proxy NFT name should be proxy');
         assert.equal(
             settings,
             adminContract.address,
@@ -277,7 +277,7 @@ contract('NFTSplitter (Base contract)', function (accounts) {
         //buyer buys  a piece
         await splitter.buyPiecesFromOwner(1, {from: bob, value: unitPrice});
         try{
-            //nft owner try to buy using buyPiecesFromOwner function
+            //NFT owner try to buy using buyPiecesFromOwner function
            await splitter.buyPiecesFromOwner(1, {from: alice, value: unitPrice});
         }catch (error){
             assert(error);

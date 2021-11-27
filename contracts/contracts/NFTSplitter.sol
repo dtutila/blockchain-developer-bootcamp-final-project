@@ -75,7 +75,7 @@ contract NFTSplitter is
         uint  price
     );
     /**
-     * @dev emitted when nft owner buys a piece from buyer
+     * @dev emitted when NFT owner buys a piece from buyer
      */
     event NFTSplitBuyBack(
         address indexed originalNFTAddress,
@@ -84,7 +84,7 @@ contract NFTSplitter is
         uint  price
     );
     /**
-     * @dev emitted when original nft is withdrawn from contract
+     * @dev emitted when original NFT is withdrawn from contract
      */
     event NFTWithdraw(
         address indexed originalNFTAddress,
@@ -191,7 +191,7 @@ contract NFTSplitter is
         bytes memory data
     ) public  override {
         require(
-            NFTSplitterAdmin(settings).isValidProxy(originalNFT, address(this))
+            NFTSplitterAdmin(settings).isValidProxy(originalNFT, tokenId, address(this))
         ,
         "NFTSplitter: caller is not a valid proxy, owner nor approved "
         );
@@ -203,7 +203,7 @@ contract NFTSplitter is
         uint256 _price,
         uint128 _buyPercentage,
         uint8 _pieces
-    ) public onlyOriginalNFTOwner {
+    ) external onlyOriginalNFTOwner {
         require (unitPrice == 0, 'NFTSplitter: splitter already created' );
         require(_price > 0, 'NFTSplitter: invalid price');
         require(_pieces > 0, 'NFTSplitter: invalid pieces' );
@@ -251,7 +251,7 @@ contract NFTSplitter is
      *
      */
 
-    function buyBackPieces(address _from, uint256 amount) public payable onlyOriginalNFTOwner nonReentrant {
+    function buyBackPieces(address _from, uint256 amount) external payable onlyOriginalNFTOwner nonReentrant {
         uint currentBalance = balanceOf(_from, tokenId);
         uint buyBackPrice = (unitPrice + (unitPrice * buyPercentage  / 100 )) * amount;
         require(msg.value  >= buyBackPrice, 'NFTSplitter: insufficient value for this transaction');
@@ -269,7 +269,7 @@ contract NFTSplitter is
      *
      *
      */
-    function buyPiecesFromOwner( uint256 amount) public payable notOriginalNFTOwner nonReentrant {
+    function buyPiecesFromOwner( uint256 amount) external payable notOriginalNFTOwner nonReentrant {
         uint currentSupply = balanceOf(originalOwner, tokenId);
         require(currentSupply  >= amount, 'NFTSplitter: not enough pieces to buy');
         require(originalOwner != msg.sender, 'NFTSplitter: you are the current nft owner');
@@ -334,7 +334,7 @@ contract NFTSplitter is
     }
 
     /// @notice Withdraw any contract funds
-    /// @dev Only the original nft  owner execute call this function
+    /// @dev Only the original NFT  owner execute call this function
     function withdraw() public onlyOriginalNFTOwner{
         //TODO: implement and create test for this scenario if applicable
     }

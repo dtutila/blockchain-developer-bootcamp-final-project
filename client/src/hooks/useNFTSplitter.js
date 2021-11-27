@@ -11,11 +11,12 @@ import {useAppContext} from '../AppContext';
 
 
 export const useSplitterContract = (splitterAddress) => {
-  const {  setTxnStatus } = useAppContext();
+  // const {  setTxnStatus } = useAppContext();
   const { account } = useWeb3React();
   const { isValidNetwork } = useIsValidNetwork();
   const { abi} = getSplitter();
   const splitterContract = useContract(splitterAddress, abi);
+  const { setNFT, setTxnStatus } = useAppContext();
   let name = '';
   let pieces = '';
   let price = '';
@@ -27,9 +28,6 @@ export const useSplitterContract = (splitterAddress) => {
   //   setCTokenBalance(formatUnits(cTokenBalance, 8));
   // };
   const geInfo = async () => {
-
-
-
 
     try {
       if (account && isValidNetwork) {
@@ -58,7 +56,7 @@ export const useSplitterContract = (splitterAddress) => {
         trx.wait(1).then(
             res => {
 
-              console.log('splitMyNFT nft ->', res);
+              console.log('splitMyNFT NFT ->', res);
 
             }
         );
@@ -151,16 +149,17 @@ export const useSplitterContract = (splitterAddress) => {
     }
   };
 
-/*  useEffect(() => {
-    if (account) {
-      getCTokenExchangeRate();
+  useEffect(() => {
+    if (account && setNFT) {
+      geInfo();
     }
-  }, [account]);*/
+  }, [setNFT]);
 
   return {
     splitMyNFT,
     buyBackPieces,
     buyPiecesFromOwner,
-    withdrawOriginalNFT
+    withdrawOriginalNFT,
+    geInfo
   };
 };

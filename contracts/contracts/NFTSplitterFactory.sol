@@ -7,11 +7,15 @@ contract NFTSplitterFactory {
   address private owner;
   address private settings;
   address private NFTSplitterBase;
-  address[] private splitters;
+
 
   //is the app in pause state??
   modifier isNotPaused(){
     require (!NFTSplitterAdmin(settings).isPaused(), 'NFTSplitterFactory: Factory is paused');
+    _;
+  }
+  modifier onlyOwner(){
+    require (msg.sender == owner, 'NFTSplitterFactory: Factory is paused');
     _;
   }
     /**
@@ -33,10 +37,9 @@ contract NFTSplitterFactory {
    * @dev function that creates a new splitter proxy contract
    *
    */
-  function createNFTSplitter(address _nft, uint _tokenId) public payable isNotPaused returns (NFTSplitterProxy prx){
+  function createNFTSplitter(address _nft, uint _tokenId) public  isNotPaused returns (NFTSplitterProxy prx){
     prx = new NFTSplitterProxy (_nft, _tokenId, msg.sender, NFTSplitterBase, settings, "");
-    NFTSplitterAdmin(settings).registerProxy(_nft,  address(prx));
-    splitters.push(address(prx));
+    NFTSplitterAdmin(settings).registerProxy(_nft, _tokenId,  address(prx));
     emit ProxyCreated(_nft, address(prx), msg.sender);
     return prx;
   }
@@ -45,9 +48,18 @@ contract NFTSplitterFactory {
     return NFTSplitterBase;
   }
 
-  //returns all the proxies created
-  function getNFTSplitters() external view returns ( address[] memory ) {
-    return splitters;
+  // Function to receive Ether. msg.data must be empty
+  receive() external payable {}
+
+  // Fallback function is called when msg.data is not empty
+  fallback() external payable {}
+
+  function getBalance() public view returns (uint256) {
+    return address(this).balance;
   }
-  
+
+  /// @notice Withdraw any contract funds
+  function withdraw() public {
+    //TODO: implement withdraw and send founds to owner
+  }
 }
