@@ -14,6 +14,7 @@ import FieldInput from '../../components/FieldInput';
 import { colors } from '../../theme';
 import {useNFT} from '../../hooks/useNFT';
 import {useSplitterContract} from '../../hooks/useNFTSplitter';
+import {useWeb3React} from '@web3-react/core';
 
 const Container = styled.div`
   display: flex;
@@ -48,6 +49,7 @@ const NFTCard = ({proxyAddress, nftAddress, tokenId, ...props}) => {
   const [value, setValue ] = useState('');
   const { approve } = useNFT(nftAddress);
   const {nft} = useAppContext();
+  const { account } = useWeb3React();
   const { splitMyNFT,
       buyBackPieces,
       buyPiecesFromOwner,
@@ -60,6 +62,9 @@ const NFTCard = ({proxyAddress, nftAddress, tokenId, ...props}) => {
     useEffect(()=>{
         getSplitterInfo(nftAddress, tokenId);
     }, []);
+    useEffect(()=>{
+        console.log('trader =>', nft);
+    }, [nft]);
 
   const handleNFTApprovalSubmit = () => {
      approve(nftAddress, tokenId, proxyAddress).then( () => {
@@ -192,7 +197,7 @@ const NFTCard = ({proxyAddress, nftAddress, tokenId, ...props}) => {
             <Container show>
                 <Card style={{maxWidth: 420, minHeight: 400}}>
                     <Text bold block t2 color={colors.primary_light} className="mb-3">
-                        Trade my NFT
+                        Trade {nft.name}
                     </Text>
                     <FieldInput value={pieces} setValue={setPieces} title="Pieces" />
                     <FieldInput value={value} setValue={setValue} title="eth" />

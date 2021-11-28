@@ -3,7 +3,7 @@ import { useContract } from './useContract';
 import useIsValidNetwork from '../hooks/useIsValidNetwork';
 import { useWeb3React } from '@web3-react/core';
 import { useDispatch, useSelector } from 'react-redux';
-import { formatUnits, parseEther } from '@ethersproject/units';
+import {formatEther, formatUnits, parseEther} from '@ethersproject/units';
 import { useEffect } from 'react';
 
 import getSplitter from '../abi/nftsplitter';
@@ -31,6 +31,7 @@ export const useSplitterContract = (splitterAddress) => {
         const approved = await nftContract.isApprovedForAll(originalOwner, splitterAddress);
         const nftName = await splitterContract.name();
         const nftBalance = await splitterContract.balanceOf(account, tokenId);
+        //TransferSingle
 
         console.log('approved ->', approved, nftName, nftBalance);
 
@@ -40,12 +41,27 @@ export const useSplitterContract = (splitterAddress) => {
           const pieces = await splitterContract.pieces();
           const unitPrice = await splitterContract.unitPrice();
           const percentage = await splitterContract.buyPercentage();
-         // console.log('loaded', name, pieces.toNumber(), unitPrice.toNumber(), percentage.toNumber());
+
           setNFT({ nftName, nftBalance, name, pieces, unitPrice, percentage, approved});
           console.log(pieces > 0);
           if (pieces > 0) {
+            let eventFilter = splitterContract.filters.TransferSingle()
+            let events = await splitterContract.queryFilter(eventFilter)
+
+            const userAddresses = events.map(event => {return event.args} ).map( arg => {return { owner: arg[0]}});
+           // let users;
+            const owners = await Promise.all(userAddresses.map( async user => {
+                const balance =  await splitterContract.balanceOf(user.owner, tokenId);
+                return {
+                  owner: user.owner,
+                  pieces: balance.toString()
+                }
+            }));
+            //console.log('events ->', owners );
+            setNFT({ nftName, nftBalance, approved, owners, percentage: percentage.toString(), unitPrice, pieces: pieces.toString(), name  });
             setTxnStatus('READY');
           } else {
+            setNFT({ nftName, nftBalance, approved, owners: [], percentage: percentage.toString(), unitPrice, pieces: pieces.toString(), name  });
             setTxnStatus('APPROVED');
           }
 
@@ -54,7 +70,7 @@ export const useSplitterContract = (splitterAddress) => {
           setTxnStatus('PENDING_APPROVAL');
         }
 
-
+       // setTxnStatus('COMPLETE');
       }
     } catch (error) {
       console.log(error);
