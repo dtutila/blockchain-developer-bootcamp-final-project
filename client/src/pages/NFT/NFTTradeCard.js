@@ -1,19 +1,17 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import {Link, useParams} from 'react-router-dom';
 import styled from 'styled-components';
 import Text from '../../components/Text';
-
 import Card from '../../components/Card';
 
 
-import { ArrowDown } from 'react-bootstrap-icons';
-import { useCToken } from '../../hooks/useCToken';
+
 import { useAppContext } from '../../AppContext';
 import Spinner from 'react-bootstrap/Spinner';
-import useEth from '../../hooks/useEth';
+
 import useTransaction from '../../hooks/useTransaction';
 import FieldInput from '../../components/FieldInput';
 import { colors } from '../../theme';
-import {useSplitterFactory} from '../../hooks/useSplitterFactory';
 import {useNFT} from '../../hooks/useNFT';
 import {useSplitterContract} from '../../hooks/useNFTSplitter';
 
@@ -42,22 +40,26 @@ const Button = styled.button`
 `;
 
 const NFTCard = ({proxyAddress, nftAddress, tokenId, ...props}) => {
-    //PENDING_APPROVAL
-    //READY
-    //0x751a14B2328741E5085a4E19Dfb6B953F531A79A acct1
-  const [txnStatus, setTxnStatus ] = useState('READY');
+  const { txnStatus, setTxnStatus } = useTransaction();
   const [price, setPrice ] = useState('');
   const [percentage, setPercentage ] = useState('');
   const [approved, setApproved ] = useState(false);
   const [pieces, setPieces ] = useState('');
   const [value, setValue ] = useState('');
   const { approve } = useNFT(nftAddress);
+  const {nft} = useAppContext();
   const { splitMyNFT,
       buyBackPieces,
       buyPiecesFromOwner,
-      withdrawOriginalNFT } = useSplitterContract(proxyAddress);
+      withdrawOriginalNFT,
+      getSplitterInfo } = useSplitterContract(proxyAddress);
   //loading
   const account2 = '0xd94550a14B94E8D56142f7874413EA74239bB997';
+    console.log('prx', proxyAddress);
+
+    useEffect(()=>{
+        getSplitterInfo(nftAddress, tokenId);
+    }, []);
 
   const handleNFTApprovalSubmit = () => {
      approve(nftAddress, tokenId, proxyAddress).then( () => {
@@ -147,6 +149,14 @@ const NFTCard = ({proxyAddress, nftAddress, tokenId, ...props}) => {
             <Text bold block t2 color={colors.primary_light} className="mb-3">
               Approve Splitter Contract
             </Text>
+
+              <Text bold block t4 color={colors.primary_light} className="mb-3">
+                  NFT:  <a href={`https://testnets.opensea.io/assets/${nftAddress}/${tokenId}`} target="_blank"> {nftAddress} </a>
+              </Text>
+
+              <Text bold block t4 color={colors.primary_light} className="mb-3">
+                  Token Id: {tokenId}
+              </Text>
 
             <Button primary className="mt-3" onClick={handleNFTApprovalSubmit}>
               Approve

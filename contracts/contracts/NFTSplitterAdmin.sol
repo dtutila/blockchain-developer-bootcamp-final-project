@@ -53,11 +53,12 @@ contract NFTSplitterAdmin {
       * @dev registers a proxy in the settings
       *
      */
-    function registerProxy(address _nft, address _proxy)
+    function registerProxy(address _nft, uint _tokenId, address _proxy)
     external
     onlyFactory
     {
-        boolStorage[keccak256(abi.encodePacked(PROXY, _nft, _proxy))] = true;
+        boolStorage[keccak256(abi.encodePacked(PROXY, _nft, _tokenId, _proxy))] = true;
+        addressStorage[keccak256(abi.encodePacked(_nft, _tokenId))] = _proxy;
         emit ProxyRegistered (_proxy, _nft);
 
     }
@@ -75,11 +76,11 @@ contract NFTSplitterAdmin {
       * @dev only registered proxies can execute some functions in the base contract
       *
      */
-    function isValidProxy(address _nft, address proxyAddress)
+    function isValidProxy(address _nft, uint _tokenId, address proxyAddress)
     external
     returns (bool)
     {
-        return boolStorage[keccak256(abi.encodePacked(PROXY, _nft, proxyAddress))] ;
+        return boolStorage[keccak256(abi.encodePacked(PROXY, _nft, _tokenId, proxyAddress))] ;
     }
 
 
@@ -111,5 +112,15 @@ contract NFTSplitterAdmin {
 
     function getImplementation() external view returns (address) {
         return addressStorage[NFTSPLITTER_ADDRESS];
+    }
+
+    function getProxyAddressByNFT(address _nft, uint _tokenId)
+    external view
+    onlyFactory
+    returns (address)
+    {
+       return addressStorage[keccak256(abi.encodePacked(_nft, _tokenId))];
+
+
     }
 }

@@ -12,7 +12,7 @@ contract NFTSplitterProxy is NFTSplitterStorage, Proxy {
     string public symbol;
 
     address private implementation;
-   // address private settings;
+
 
     constructor(
         address _nft,
@@ -25,6 +25,7 @@ contract NFTSplitterProxy is NFTSplitterStorage, Proxy {
         settings = _settings;
         implementation = _logic;
         name = "proxy";
+        symbol = "PRX";
         originalOwner = _owner;
         originalNFT = _nft;
         tokenId = _tokenId;

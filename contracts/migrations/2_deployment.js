@@ -2,6 +2,7 @@ const base = artifacts.require("NFTSplitter");
 const admin = artifacts.require("NFTSplitterAdmin");
 const factory = artifacts.require("NFTSplitterFactory");
 const nft = artifacts.require("NFTMock");
+const erc1155 = artifacts.require("NFTMock2");
 
 
 
@@ -13,6 +14,7 @@ module.exports = async function (deployer, network, accounts) {
     //deploy only for development network (testing)
     if (network === 'development') {
         await deployer.deploy(nft, 'test', 'test' ,  {from: owner});
+        await deployer.deploy(erc1155, {from: owner});
     }
     //admin contract
     deployer.deploy(admin,  {from: owner});
@@ -32,8 +34,8 @@ module.exports = async function (deployer, network, accounts) {
 
     });;
   
-    console.log('admin-> ' , admin.address);
+    console.log('admin->   ' , admin.address);
     console.log('factory-> ' , factory.address);
-    console.log('base-> ' , base.address);
+    console.log('base->    ' , base.address);
 
 };

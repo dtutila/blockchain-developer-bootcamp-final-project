@@ -57,7 +57,7 @@ export const useNFT = (nftAddress) => {
         trx.wait(1).then(
             res => {
 
-              console.log('approve nft ->', res);
+              console.log('approve NFT ->', res);
              /* dispatcher({
                 type: SPLITTER_CREATED,
                 payload: { splitter:  splitterAddress}

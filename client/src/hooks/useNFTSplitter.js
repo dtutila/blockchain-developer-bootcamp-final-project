@@ -8,57 +8,74 @@ import { useEffect } from 'react';
 
 import getSplitter from '../abi/nftsplitter';
 import {useAppContext} from '../AppContext';
-
+import {Contract} from '@ethersproject/contracts';
+import getNFT from '../abi/nft';
+const {abi: nftabi} = getNFT();
 
 export const useSplitterContract = (splitterAddress) => {
-  const {  setTxnStatus } = useAppContext();
-  const { account } = useWeb3React();
+
+  const { account, library } = useWeb3React();
   const { isValidNetwork } = useIsValidNetwork();
   const { abi} = getSplitter();
   const splitterContract = useContract(splitterAddress, abi);
-  let name = '';
-  let pieces = '';
-  let price = '';
-  let percentage = '';
-  let owners = '';
+  const { setNFT, setTxnStatus } = useAppContext();
 
-  // const fetchCTokenBalance = async () => {
-  //   const cTokenBalance = await cTokenContract.balanceOf(account);
-  //   setCTokenBalance(formatUnits(cTokenBalance, 8));
-  // };
-  const geInfo = async () => {
-
-
-
+  const getSplitterInfo = async ( nftAddress, tokenId) => {
 
     try {
+      setTxnStatus('LOADING');
       if (account && isValidNetwork) {
-        console.log('loading splitters');
-        name = await splitterContract.name();
-        pieces = await splitterContract.pieces();
-        price = await splitterContract.NFTPrice();
-        percentage = await splitterContract.buyPercentage();
+        const originalOwner = await splitterContract.originalOwner();
+        const signerOrProvider = account ? library.getSigner(account).connectUnchecked() : library;
+        const nftContract = new Contract(nftAddress, nftabi, signerOrProvider);
+        const approved = await nftContract.isApprovedForAll(originalOwner, splitterAddress);
+        const nftName = await splitterContract.name();
+        const nftBalance = await splitterContract.balanceOf(account, tokenId);
+
+        console.log('approved ->', approved, nftName, nftBalance);
+
+        if (approved){
+          console.log('loading splitters');
+          const name = await splitterContract.name();
+          const pieces = await splitterContract.pieces();
+          const unitPrice = await splitterContract.unitPrice();
+          const percentage = await splitterContract.buyPercentage();
+         // console.log('loaded', name, pieces.toNumber(), unitPrice.toNumber(), percentage.toNumber());
+          setNFT({ nftName, nftBalance, name, pieces, unitPrice, percentage, approved});
+          console.log(pieces > 0);
+          if (pieces > 0) {
+            setTxnStatus('READY');
+          } else {
+            setTxnStatus('APPROVED');
+          }
+
+        } else {
+          setNFT({ nftName, nftBalance, approved});
+          setTxnStatus('PENDING_APPROVAL');
+        }
+
 
       }
     } catch (error) {
       console.log(error);
+      setTxnStatus('ERROR');
     }
-    return { name, price, pieces, percentage }
+
   };
 
-  const splitMyNFT = async (tokenId, price, percentage, pieces, initialSupply, lockTime) => {
+  const splitMyNFT = async (tokenId, price, percentage, pieces) => {
     try {
       if (account && isValidNetwork) {
         setTxnStatus('LOADING');
         console.log('loading splitMyNFT ===> ', parseEther(price).toString());
 
-        const trx = await splitterContract.splitMyNFT(tokenId, parseEther(price), percentage, pieces, initialSupply, lockTime, {
+        const trx = await splitterContract.splitMyNFT(tokenId, parseEther(price), percentage, pieces,  {
           from: account
         });
         trx.wait(1).then(
             res => {
 
-              console.log('splitMyNFT nft ->', res);
+              console.log('splitMyNFT NFT ->', res);
 
             }
         );
@@ -151,16 +168,17 @@ export const useSplitterContract = (splitterAddress) => {
     }
   };
 
-/*  useEffect(() => {
-    if (account) {
-      getCTokenExchangeRate();
+ /* useEffect(() => {
+    if (account && setNFT) {
+      //geInfo();
     }
-  }, [account]);*/
-
+  }, [setNFT]);
+*/
   return {
     splitMyNFT,
     buyBackPieces,
     buyPiecesFromOwner,
-    withdrawOriginalNFT
+    withdrawOriginalNFT,
+    getSplitterInfo
   };
 };
