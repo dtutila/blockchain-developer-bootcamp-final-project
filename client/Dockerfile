@@ -1,0 +1,27 @@
+# pull official base image
+FROM node:14-alpine
+
+# set working directory
+ADD ./client /opt/webapp/
+WORKDIR /opt/webapp
+
+# add `/app/node_modules/.bin` to $PATH
+ENV PATH /opt/client/node_modules/.bin:$PATH
+
+# Run the image as a non-root user
+RUN adduser -D myuser
+USER myuser
+
+# install app dependencies
+COPY package.json ./
+RUN npm install --silent
+RUN npm install react-scripts@4.0.0 -g --silent
+
+# add app
+COPY . ./
+
+# Expose port
+#EXPOSE 3000
+
+# start app
+CMD ["npm", "start"]
