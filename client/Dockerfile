@@ -15,7 +15,6 @@ USER myuser
 # install app dependencies
 COPY *.json ./
 RUN npm install --silent
-RUN npm install react-scripts@4.0.0 -g --silent
 
 # add app
 COPY . ./
