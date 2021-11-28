@@ -1,4 +1,5 @@
 module.exports = {
+  modify: require("razzle-heroku"),
   options: {
     buildType: 'spa',
     enableBabelCache: false,
