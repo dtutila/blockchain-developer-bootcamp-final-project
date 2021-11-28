@@ -42,7 +42,7 @@ export const useSplitterContract = (splitterAddress) => {
           const unitPrice = await splitterContract.unitPrice();
           const percentage = await splitterContract.buyPercentage();
 
-          setNFT({ nftName, nftBalance, name, pieces, unitPrice, percentage, approved});
+          //setNFT({ nftName, nftBalance, name, pieces, unitPrice, percentage, approved});
           console.log(pieces > 0);
           if (pieces > 0) {
             let eventFilter = splitterContract.filters.TransferSingle()
@@ -58,10 +58,11 @@ export const useSplitterContract = (splitterAddress) => {
                 }
             }));
             //console.log('events ->', owners );
-            setNFT({ nftName, nftBalance, approved, owners, percentage: percentage.toString(), unitPrice, pieces: pieces.toString(), name  });
+
+            setNFT({ nftName, nftAddress, nftBalance, approved, owners:owners, percentage: percentage.toString(), unitPrice: parseFloat(formatEther(unitPrice)).toPrecision(2), pieces: pieces.toString(), name  });
             setTxnStatus('READY');
           } else {
-            setNFT({ nftName, nftBalance, approved, owners: [], percentage: percentage.toString(), unitPrice, pieces: pieces.toString(), name  });
+            setNFT({ nftName, nftAddress, nftBalance, approved, owners: [], percentage: percentage.toString(), unitPrice: parseFloat(formatEther(unitPrice)).toPrecision(2), pieces: pieces.toString(), name  });
             setTxnStatus('APPROVED');
           }
 
