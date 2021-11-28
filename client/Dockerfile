@@ -2,7 +2,7 @@
 FROM node:14-alpine
 
 # set working directory
-ADD ./client /opt/webapp/
+ADD ./ /opt/webapp/
 WORKDIR /opt/webapp
 
 # add `/app/node_modules/.bin` to $PATH
