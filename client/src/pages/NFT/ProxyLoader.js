@@ -5,12 +5,18 @@ import useTransaction from '../../hooks/useTransaction';
 import {useAppContext} from '../../AppContext';
 import {useSplitterFactory} from '../../hooks/useSplitterFactory';
 import {useWeb3React} from '@web3-react/core';
+import Card from '../../components/Card';
+import Text from '../../components/Text';
+import { AddressZero } from '@ethersproject/constants';
+import styled from 'styled-components';
+import {colors} from '../../theme';
+import SplitterCard from '../Splitter/SplitterCard';
 
 const ProxyLoader = () => {
     const params = useParams();
     const {  setTxnStatus } = useTransaction();
     const { setNFT } = useAppContext();
-     // const [prxAddress, setPrxAddress] = useState('');
+     const [validAddress, setValidAddress] = useState(false);
     const [nftAddress, setNFTAddress] = useState('');
     const [tokenId, setTokenId] = useState('');
     const {getProxyAddressByNFT} = useSplitterFactory();
@@ -27,6 +33,7 @@ const ProxyLoader = () => {
             if (proxyAddress) {
 
             }
+            setValidAddress(proxyAddress && proxyAddress !== AddressZero);
         }
 
 
@@ -38,16 +45,18 @@ const ProxyLoader = () => {
     }
 
 
+
     return (
         <React.Fragment>
-        { proxyAddress &&  <NFTTradeCard proxyAddress={proxyAddress}
+        {validAddress &&  <NFTTradeCard proxyAddress={proxyAddress}
                       nftAddress={params.nftAddress}
                       tokenId={params.tokenId}
 
 
         />}
-    { !proxyAddress &&
-        <h1>no poxy</h1>
+    { !validAddress &&
+    <SplitterCard  nftAddress={params.nftAddress}
+                   tokenId={params.tokenId}  tittle="No Splitter found for this NFT, create a new one" />
     }</React.Fragment>
     );
 

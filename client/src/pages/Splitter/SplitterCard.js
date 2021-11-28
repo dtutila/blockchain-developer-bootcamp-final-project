@@ -40,9 +40,9 @@ const Button = styled.button`
   border-radius: 3px;
 `;
 
-const SplitterCard = () => {
-  const [nftAddress, setNFTAddress] = useState('');
-  const [tokenId, setTokenId] = useState('');
+const SplitterCard = (props) => {
+  const [nftAddress, setNFTAddress] = useState(props.nftAddress);
+  const [tokenId, setTokenId] = useState(props.tokenId);
   const { createSplitter } = useSplitterFactory();
   const history = useHistory();
 
@@ -89,12 +89,12 @@ const SplitterCard = () => {
   return (
     <Container show>
       <Card style={{ maxWidth: 420, minHeight: 300 }}>
-        <Text bold block t2 color={colors.primary_light} className="mb-3">
-          Create a new Splitter
+        <Text bold block t2  color={colors.primary_light} className="mb-3 text-center">
+            {props.tittle}
         </Text>
-        <FieldInput value={nftAddress} setValue={setNFTAddress} title="NFT Address"/>
+        <FieldInput value={nftAddress} setValue={setNFTAddress} title="NFT Address:"/>
 
-        <FieldInput value={tokenId} setValue={setTokenId} title="Token Id" />
+        <FieldInput value={tokenId} setValue={setTokenId} title="Token Id:" />
         <Button primary  className="mt-3" onClick={handleCreationSubmit}>
          Create
         </Button>
