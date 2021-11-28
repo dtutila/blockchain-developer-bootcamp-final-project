@@ -15,7 +15,7 @@ USER myuser
 # install app dependencies
 COPY *.json ./
 RUN npm install --silent
-RUN npm i -S razzle-heroku
+
 
 # add app
 COPY . ./
