@@ -21,8 +21,8 @@ contract NFTSplitterStorage {
     address public originalOwner; //original NFT owner address
     address public settings; // admin contract address
 
-//    mapping(address => uint256) owners;
-//    mapping(uint256 => address) ownersByPiece;
+    mapping(address => uint256) owners;
+
 
 
 

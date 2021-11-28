@@ -2,20 +2,36 @@ import { useContract } from './useContract';
 
 import useIsValidNetwork from '../hooks/useIsValidNetwork';
 import { useWeb3React } from '@web3-react/core';
-
-import { formatUnits, parseEther } from '@ethersproject/units';
-import { useEffect } from 'react';
 import { useAppContext } from '../AppContext';
 import getFactory from '../abi/factory';
 
 
 
+
 export const useSplitterFactory = () => {
-  const { setCTokenBalance, setExchangeRate, setTxnStatus, cTokenBalance, exchangeRate } = useAppContext();
-  const { account } = useWeb3React();
+  const { setCTokenBalance, setExchangeRate, setTxnStatus, setProxyAddress, exchangeRate } = useAppContext();
+  const { account, library } = useWeb3React();
   const { isValidNetwork } = useIsValidNetwork();
   const {address, abi} = getFactory();
   const factoryContract = useContract(address, abi);
+
+
+
+
+  const getProxyAddressByNFT = async (nftAddress, tokenId) => {
+    let proxy ;
+    try {
+      if (account && isValidNetwork) {
+        let proxy = await factoryContract.getProxyAddressByNFT(nftAddress, tokenId);
+        console.log('proxy ->', proxy);
+        setProxyAddress(proxy);
+
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+  };
 
   const getSplitters = async () => {
     try {
@@ -67,6 +83,7 @@ export const useSplitterFactory = () => {
 
   return {
     getSplitters,
-    createSplitter
+    createSplitter,
+    getProxyAddressByNFT
   };
 };

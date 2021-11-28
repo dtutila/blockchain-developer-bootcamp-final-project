@@ -48,6 +48,10 @@ contract NFTSplitterFactory {
     return NFTSplitterBase;
   }
 
+  function getProxyAddressByNFT(address _nft, uint _tokenId) external view returns (address) {
+    return NFTSplitterAdmin(settings).getProxyAddressByNFT(_nft, _tokenId);
+  }
+
   // Function to receive Ether. msg.data must be empty
   receive() external payable {}
 

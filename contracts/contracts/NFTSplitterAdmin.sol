@@ -113,4 +113,14 @@ contract NFTSplitterAdmin {
     function getImplementation() external view returns (address) {
         return addressStorage[NFTSPLITTER_ADDRESS];
     }
+
+    function getProxyAddressByNFT(address _nft, uint _tokenId)
+    external view
+    onlyFactory
+    returns (address)
+    {
+       return addressStorage[keccak256(abi.encodePacked(_nft, _tokenId))];
+
+
+    }
 }

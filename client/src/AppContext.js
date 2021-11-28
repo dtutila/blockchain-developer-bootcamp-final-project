@@ -16,6 +16,10 @@ const initialContext = {
     txnStatus: 'NOT_SUBMITTED',
     setTxnStatus: () => {
     },
+    nft: { },
+    setNFT: () => { },
+    proxyAddress: '',
+    setProxyAddress: () => { }
 };
 
 const appReducer = (state, {type, payload}) => {
@@ -29,6 +33,11 @@ const appReducer = (state, {type, payload}) => {
             return {
                 ...state,
                 nft: payload,
+            };
+        case 'SET_PROXY_ADDRESS':
+            return {
+                ...state,
+                proxyAddress: payload,
             };
 
         case 'SET_C_TOKEN_BALANCE':
@@ -69,9 +78,13 @@ export const AppContextProvider = ({children}) => {
         setEthBalance: (balance) => {
             dispatch({type: 'SET_ETH_BALANCE', payload: balance});
         },
-
+        nft: store.nft,
         setNFT: (nft) => {
-            dispatch({type: 'SET_NFT', nft: nft});
+            dispatch({type: 'SET_NFT', payload: nft});
+        },
+        proxyAddress: store.proxyAddress,
+        setProxyAddress: (address) => {
+            dispatch({type: 'SET_PROXY_ADDRESS', payload: address});
         },
         cTokenBalance: store.cTokenBalance,
         setCTokenBalance: (balance) => {

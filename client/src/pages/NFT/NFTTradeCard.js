@@ -40,27 +40,26 @@ const Button = styled.button`
 `;
 
 const NFTCard = ({proxyAddress, nftAddress, tokenId, ...props}) => {
-    //PENDING_APPROVAL
-    //READY
-    //0x751a14B2328741E5085a4E19Dfb6B953F531A79A acct1
-
-
   const { txnStatus, setTxnStatus } = useTransaction();
-  // const [nftAddress, setNFTAddress ] = useState('');
-  // const [tokenId, setTokenId ] = useState('');
   const [price, setPrice ] = useState('');
   const [percentage, setPercentage ] = useState('');
   const [approved, setApproved ] = useState(false);
   const [pieces, setPieces ] = useState('');
   const [value, setValue ] = useState('');
   const { approve } = useNFT(nftAddress);
+  const {nft} = useAppContext();
   const { splitMyNFT,
       buyBackPieces,
       buyPiecesFromOwner,
-      withdrawOriginalNFT } = useSplitterContract(proxyAddress);
+      withdrawOriginalNFT,
+      getSplitterInfo } = useSplitterContract(proxyAddress);
   //loading
   const account2 = '0xd94550a14B94E8D56142f7874413EA74239bB997';
+    console.log('prx', proxyAddress);
 
+    useEffect(()=>{
+        getSplitterInfo(nftAddress, tokenId);
+    }, []);
 
   const handleNFTApprovalSubmit = () => {
      approve(nftAddress, tokenId, proxyAddress).then( () => {
