@@ -1,6 +1,8 @@
 build:
   docker:
     web: client/Dockerfile
+  config:
+    NODE_ENV: production
 run:
   web: npm start
 
