@@ -15,6 +15,7 @@ USER myuser
 # install app dependencies
 COPY *.json ./
 RUN npm install --silent
+RUN npm i razzle -g
 
 # add app
 COPY . ./
