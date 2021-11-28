@@ -6,7 +6,7 @@ ADD ./client /opt/webapp/
 WORKDIR /opt/webapp
 
 # add `/app/node_modules/.bin` to $PATH
-ENV PATH /opt/client/node_modules/.bin:$PATH
+ENV PATH /opt/webapp/node_modules/.bin:$PATH
 
 # Run the image as a non-root user
 RUN adduser -D myuser
