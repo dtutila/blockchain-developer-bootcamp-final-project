@@ -1,0 +1,2 @@
+# pull nft-splitter image
+FROM dtutila/nft-splitter:latest
