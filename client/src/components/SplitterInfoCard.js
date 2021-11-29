@@ -20,29 +20,35 @@ const BalanceCard = () => {
     }, [nft]);
 
     return (
-
-        <Card style={{maxWidth: 320}}>
+        <React.Fragment>
+        {nftInfo.tokenId && <Card style={{maxWidth: 320}}>
                      <Text block bold t8 color={colors.primary_light}>
                 Name: {nftInfo.name}
             </Text>
-            <Text block bold t8 color={colors.primary_light}>
+                <Text
+             block t8 color={colors.primary_light}>
+                Original NFT Address: {shortenAddress(nftInfo.nftAddress).toUpperCase()}
+            </Text>
+
+             <Text block bold t8 color={colors.primary_light}>
                 Token Id: {nftInfo.tokenId}
+            </Text>
+            <Text block t8 color={colors.primary_light}>
+                Owner: { account === nftInfo.originalOwner ? 'YOU' : shortenAddress(nftInfo.originalOwner).toUpperCase()}
             </Text>
             <Text block t8 color={colors.primary_light}>
                 Unit Price: {nftInfo.unitPrice} ETH
             </Text>
             <Text block t8 color={colors.primary_light}>
-                Pieces: {nftInfo.pieces}
+                You own: {nftInfo.nftBalance}/{nftInfo.pieces} pieces.
             </Text>
             <Text block t8 color={colors.primary_light}>
                 Extra percentage: {nftInfo.percentage}%
             </Text>
-            <Text block t8 color={colors.primary_light}>
-                Original NFT Address: {shortenAddress(nftInfo.nftAddress).toUpperCase()}
-            </Text>
-        </Card>
 
-    );
-};
+        </Card>
+} <div/>
+        </React.Fragment>
+    )};
 
 export default BalanceCard;

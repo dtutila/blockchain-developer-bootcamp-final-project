@@ -14,7 +14,7 @@ import {useNFT} from '../../hooks/useNFT';
 import {useSplitterContract} from '../../hooks/useNFTSplitter';
 import {useWeb3React} from '@web3-react/core';
 import OwnersCard from './OwnersCard';
-import {BigNumber} from 'ethers';
+
 
 const Container = styled.div`
   display: flex;
