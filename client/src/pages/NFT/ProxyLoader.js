@@ -6,12 +6,13 @@ import {useAppContext} from '../../AppContext';
 import {useSplitterFactory} from '../../hooks/useSplitterFactory';
 import {useWeb3React} from '@web3-react/core';
 import {AddressZero} from '@ethersproject/constants';
-import SplitterCard from '../Splitter/SplitterCard';
 import Text from '../../components/Text';
 import {Container} from 'react-bootstrap';
+import useIsValidNetwork from '../../hooks/useIsValidNetwork';
 
 const ProxyLoader = () => {
     const params = useParams();
+    const { isValidNetwork } = useIsValidNetwork();
     const {setTxnStatus} = useTransaction();
     const {setNFT} = useAppContext();
     const [validAddress, setValidAddress] = useState(false);
@@ -42,7 +43,9 @@ const ProxyLoader = () => {
         history.push(`/nft/${nftAddress}/${tokenId}`);
     };
 
-
+    if (!isValidNetwork) {
+        return (<Text> Connect to Rinkeby test network or a local network!! </Text>);
+    }
     return (
         <React.Fragment>
             {validAddress && <NFTTradeCard proxyAddress={proxyAddress}
@@ -53,7 +56,7 @@ const ProxyLoader = () => {
             />}
            {!validAddress &&
            <Container>
-           <Text > Connect wallet to continue!! </Text></Container>
+           <Text > Create a Splitter for this NFT!! </Text></Container>
             }
 
         </React.Fragment>

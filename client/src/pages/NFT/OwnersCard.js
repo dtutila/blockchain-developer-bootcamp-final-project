@@ -2,12 +2,10 @@ import React, {useState} from 'react';
 import Card from '../../components/Card';
 import Text from '../../components/Text';
 import {colors} from '../../theme';
-import FieldInput from '../../components/FieldInput';
 import OwnerRow from './OwnerRow';
 
 const OwnersCard = (props) => {
     console.log('props', props);
-   // const {nft, setNFT} = useState(props.nftInfo);
     const {enteredPrice, setEnteredPrice} = useState('');
     const {selectedPieces, setSelectedPieces} = useState('1');
     const buyPiecesHandler = (address, amount, value) => {
@@ -35,19 +33,6 @@ const OwnersCard = (props) => {
                 }
                 </ul>
 
-           {/* <FieldInput value={pieces} setValue={setPieces} title="Pieces"/>
-            <FieldInput value={value} setValue={setValue} title="eth"/>
-
-
-            <Button primary className="mt-3" onClick={handleBuySubmit}>
-                Buy Pieces
-            </Button>
-            <Button primary className="mt-3" onClick={handleBuyBackSubmit}>
-                Buy BACK
-            </Button>
-            <Button primary className="mt-3" onClick={handleWithdrawSubmit}>
-                Withdraw
-            </Button>*/}
         </Card>
     )
 }

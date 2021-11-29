@@ -71,9 +71,6 @@ const NFTCard = ({proxyAddress, nftAddress, tokenId, ...props}) => {
         getSplitterInfo
     } = useSplitterContract(proxyAddress);
 
-
-
-
     console.log('txnStatus', txnStatus);
 
 
@@ -84,6 +81,11 @@ const NFTCard = ({proxyAddress, nftAddress, tokenId, ...props}) => {
         console.log('trader =>', nft);
         console.log('errorMessage =>', errorMessage);
     }, [nft, errorMessage]);
+
+    const continueHandler = () => {
+        setTxnStatus('NOT_SUBMITTED')
+        getSplitterInfo(nftAddress, tokenId);
+    }
 
     const handleNFTApprovalSubmit = () => {
         approve(nftAddress, tokenId, proxyAddress).then(() => {
@@ -147,7 +149,7 @@ const NFTCard = ({proxyAddress, nftAddress, tokenId, ...props}) => {
                     <Text block center className="mb-5">
                         Txn Was successful!
                     </Text>
-                    <Button onClick={() => setTxnStatus('NOT_SUBMITTED')}>Go Back</Button>
+                    <Button onClick={continueHandler}>Continue</Button>
                 </Card>
             </Container>
         );
