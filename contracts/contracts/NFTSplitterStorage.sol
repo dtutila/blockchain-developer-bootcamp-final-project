@@ -4,12 +4,12 @@
  * it helps to avoid variable collision when a delegate call is used
  *
  */
-pragma solidity >=0.4.22 <0.9.0;
+pragma solidity 0.8.3;
 contract NFTSplitterStorage {
 
    // variables used to control logic
     uint8 public pieces; //number of pieces
-    //TODO: implement initial supply logic
+    //TODO: implement initial sell supply logic
     // uint8 public initialSellSupply; //number of pieces that can be sold during lock time
     uint128 public buyPercentage; //extra value to pay by owner to buy back any sold piece
     //TODO: implement lock time logic
