@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity >=0.4.22 <0.9.0;
+pragma solidity 0.8.3;
 /**
  * @notice this is where the settings of de app are storage
  * @dev it acts as eternal storage for the settings and can be use to update the contract with the base logic

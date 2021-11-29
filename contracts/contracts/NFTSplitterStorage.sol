@@ -4,7 +4,7 @@
  * it helps to avoid variable collision when a delegate call is used
  *
  */
-pragma solidity >=0.4.22 <0.9.0;
+pragma solidity 0.8.3;
 contract NFTSplitterStorage {
 
    // variables used to control logic
