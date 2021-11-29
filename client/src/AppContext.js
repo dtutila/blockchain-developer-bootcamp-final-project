@@ -19,16 +19,14 @@ const initialContext = {
     nft: { },
     setNFT: () => { },
     proxyAddress: '',
-    setProxyAddress: () => { }
+    setProxyAddress: () => { },
+    errorMessage: '',
+    setErrorMessage: () => { }
 };
 
 const appReducer = (state, {type, payload}) => {
     switch (type) {
-        case 'SET_ETH_BALANCE':
-            return {
-                ...state,
-                ethBalance: payload,
-            };
+
         case 'SET_NFT':
             return {
                 ...state,
@@ -39,12 +37,12 @@ const appReducer = (state, {type, payload}) => {
                 ...state,
                 proxyAddress: payload,
             };
-
-        case 'SET_C_TOKEN_BALANCE':
+        case 'SET_ERROR_MESSAGE':
             return {
                 ...state,
-                cTokenBalance: payload,
+                errorMessage: payload,
             };
+
 
         case 'SET_EXCHANGE_RATE':
             return {
@@ -74,10 +72,7 @@ export const AppContextProvider = ({children}) => {
     const [store, dispatch] = useReducer(appReducer, initialContext);
 
     const contextValue = {
-        ethBalance: store.ethBalance,
-        setEthBalance: (balance) => {
-            dispatch({type: 'SET_ETH_BALANCE', payload: balance});
-        },
+
         nft: store.nft,
         setNFT: (nft) => {
             dispatch({type: 'SET_NFT', payload: nft});
@@ -86,14 +81,7 @@ export const AppContextProvider = ({children}) => {
         setProxyAddress: (address) => {
             dispatch({type: 'SET_PROXY_ADDRESS', payload: address});
         },
-        cTokenBalance: store.cTokenBalance,
-        setCTokenBalance: (balance) => {
-            dispatch({type: 'SET_C_TOKEN_BALANCE', payload: balance});
-        },
-        exchangeRate: store.exchangeRate,
-        setExchangeRate: (rate) => {
-            dispatch({type: 'SET_EXCHANGE_RATE', payload: rate});
-        },
+
         isWalletConnectModalOpen: store.isWalletConnectModalOpen,
         setWalletConnectModal: (open) => {
             dispatch({type: 'SET_WALLET_MODAL', payload: open});
@@ -102,6 +90,10 @@ export const AppContextProvider = ({children}) => {
         setTxnStatus: (status) => {
             dispatch({type: 'SET_TXN_STATUS', payload: status});
         },
+        errorMessage: store.errorMessage,
+        setErrorMessage: (status) => {
+            dispatch({type: 'SET_ERROR_MESSAGE', payload: status});
+        }
     };
 
     return <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>;

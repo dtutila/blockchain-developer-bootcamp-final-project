@@ -25,6 +25,9 @@ const BalanceCard = () => {
                      <Text block bold t8 color={colors.primary_light}>
                 Name: {nftInfo.name}
             </Text>
+            <Text block bold t8 color={colors.primary_light}>
+                Token Id: {nftInfo.tokenId}
+            </Text>
             <Text block t8 color={colors.primary_light}>
                 Unit Price: {nftInfo.unitPrice} ETH
             </Text>

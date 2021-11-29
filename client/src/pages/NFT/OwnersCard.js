@@ -10,20 +10,25 @@ const OwnersCard = (props) => {
    // const {nft, setNFT} = useState(props.nftInfo);
     const {enteredPrice, setEnteredPrice} = useState('');
     const {selectedPieces, setSelectedPieces} = useState('1');
-    const buyPiecesHandler = (address, amount) => {
-        console.log(address, amount);
+    const buyPiecesHandler = (address, amount, value) => {
+        console.log('buyPiecesHandler',address, amount, value);
+        props.buyHandler(address, amount, value);
     }
     console.log('owners', props.nftInfo.owners);
     return (
         <Card style={{maxWidth: 420, minHeight: 400}}>
             <Text bold block t2  center color={colors.primary_light} className="mb-3">
-                Owners
+                Buy From  { props.nftInfo.isOriginalOwner ? ' Other Owners' : ' Original Owner'}
             </Text>
 
                 <ul>
                   {props.nftInfo.owners.map(e => {
                     return (
-                     <OwnerRow key={e.owner+ 'row'} owner={e.owner} pieces={e.pieces} buyPiecesHandler={buyPiecesHandler}/>
+                     <OwnerRow key={e.owner+ 'row'} owner={e.owner}
+                               pieces={e.pieces}
+                               unitPrice={props.nftInfo.unitPrice}
+                               percentaje={props.nftInfo.percentage}
+                               buyPiecesHandler={buyPiecesHandler}/>
 
                     )})
 

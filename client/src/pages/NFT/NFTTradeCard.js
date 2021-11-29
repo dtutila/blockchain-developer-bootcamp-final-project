@@ -60,8 +60,9 @@ const NFTCard = ({proxyAddress, nftAddress, tokenId, ...props}) => {
     const [pieces, setPieces] = useState('');
     const [value, setValue] = useState('');
     const {approve} = useNFT(nftAddress);
-    const {nft} = useAppContext();
+    const {nft, errorMessage, setErrorMessage} = useAppContext();
     const {account} = useWeb3React();
+
     const {
         splitMyNFT,
         buyBackPieces,
@@ -69,16 +70,20 @@ const NFTCard = ({proxyAddress, nftAddress, tokenId, ...props}) => {
         withdrawOriginalNFT,
         getSplitterInfo
     } = useSplitterContract(proxyAddress);
-    //loading
+
+
+
 
     console.log('txnStatus', txnStatus);
+
 
     useEffect(() => {
         getSplitterInfo(nftAddress, tokenId);
     }, []);
     useEffect(() => {
         console.log('trader =>', nft);
-    }, [nft]);
+        console.log('errorMessage =>', errorMessage);
+    }, [nft, errorMessage]);
 
     const handleNFTApprovalSubmit = () => {
         approve(nftAddress, tokenId, proxyAddress).then(() => {
@@ -107,6 +112,8 @@ const NFTCard = ({proxyAddress, nftAddress, tokenId, ...props}) => {
         );
     };
     const handleBuyBackSubmit = (from, pieces, value) => {
+        setTxnStatus('LOADING');
+        console.log('handleBuyBackSubmit!!', from, pieces, value);
         buyBackPieces(from, pieces, value).then(() => {
                 console.log('buyBackPieces!!');
                 setApproved(true);
@@ -136,7 +143,7 @@ const NFTCard = ({proxyAddress, nftAddress, tokenId, ...props}) => {
     if (txnStatus === 'COMPLETE'  ) {
         return (
             <Container show>
-                <Card style={{maxWidth: 420, minHeight: 400}}>
+                <Card style={{maxWidth: 420, minHeight: 200}}>
                     <Text block center className="mb-5">
                         Txn Was successful!
                     </Text>
@@ -149,38 +156,16 @@ const NFTCard = ({proxyAddress, nftAddress, tokenId, ...props}) => {
     if (txnStatus === 'ERROR') {
         return (
             <Container show>
-                <Card style={{maxWidth: 420, minHeight: 400}}>
-                    <Text>Txn ERROR</Text>
-                    <Button onClick={() => setTxnStatus('NOT_SUBMITTED')}>Go Back</Button>
+                <Card style={{maxWidth: 420, minHeight: 250}}>
+                    <Text>Txn ERROR: </Text>
+                    <Text> {errorMessage}</Text>
+                    <Button onClick={() => {setTxnStatus('NOT_SUBMITTED'); setErrorMessage('');}}>Go Back</Button>
                 </Card>
             </Container>
         );
     }
 
-  /*  if (txnStatus === 'PENDING_APPROVAL') {
-        return (
-            <Container show>
-                <Card style={{maxWidth: 420, minHeight: 400}}>
-                    <Text bold block t2 color={colors.primary_light} className="mb-3">
-                        Approve Splitter Contract
-                    </Text>
 
-                    <Text bold block t4 color={colors.primary_light} className="mb-3">
-                        NFT: <a href={`https://testnets.opensea.io/assets/${nftAddress}/${tokenId}`}
-                                target="_blank"> {nftAddress} </a>
-                    </Text>
-
-                    <Text bold block t4 color={colors.primary_light} className="mb-3">
-                        Token Id: {tokenId}
-                    </Text>
-
-                    <Button primary className="mt-3" onClick={handleNFTApprovalSubmit}>
-                        Approve
-                    </Button>
-                </Card>
-            </Container>
-        );
-    }*/
 
     if ( (txnStatus === 'COMPLETE' || txnStatus === 'NOT_SUBMITTED' )&& nft.status === 'APPROVED') {
         return (
@@ -207,32 +192,25 @@ const NFTCard = ({proxyAddress, nftAddress, tokenId, ...props}) => {
 
     if ((txnStatus === 'COMPLETE' || txnStatus === 'NOT_SUBMITTED' )&& nft.status === 'READY') {
         return (
-            <ContainerRow show>
+            <Container show>
 
 
-                <Card style={{maxWidth: 420, minHeight: 400}}>
-                    <Text bold block t2  center color={colors.primary_light} className="mb-3">
-                        Trade {nft.name}
+                {nft.pieces === nft.nftBalance && <Card style={{maxWidth: 420, minHeight: 200}}>
+                    <Text bold block t2 center color={colors.primary_light} className="mb-3">
+                        You Own All Pieces!! <br/>
+                        {nft.name}
                     </Text>
-                    <FieldInput value={pieces} setValue={setPieces} title="Pieces"/>
-                    <FieldInput value={value} setValue={setValue} title="eth"/>
 
-
-                  {/*  <Button primary className="mt-3" onClick={handleBuySubmit}>
-                        Buy Pieces
-                    </Button>*/}
-                    <Button primary className="mt-3" onClick={handleBuyBackSubmit}>
-                        Buy BACK
-                    </Button>
                     <Button primary className="mt-3" onClick={handleWithdrawSubmit}>
                         Withdraw
                     </Button>
                 </Card>
+                }
 
-                <OwnersCard nftInfo={nft} buyHandler={handleBuySubmit}/>
+                {nft.pieces !== nft.nftBalance  && <OwnersCard nftInfo={nft} buyHandler={nft.isOriginalOwner? handleBuyBackSubmit : handleBuySubmit}/>}
 
 
-            </ContainerRow>
+            </Container>
         );
 
     }
