@@ -51,7 +51,7 @@ const SplitterCard = (props) => {
         history.push(`/nft/${nftAddress}/${tokenId}`);
     };
     if (!isValidNetwork) {
-        return (<Text> Connect to Rinkeby test network or a local network!! </Text>);
+        return (<Text> Connect to Rinkeby!! (or local network if it is running locally) </Text>);
     }
     // if (!account) {
     //     return (<Text> Connect wallet to continue!! </Text>);
