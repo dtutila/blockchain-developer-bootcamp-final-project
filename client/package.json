@@ -6,6 +6,18 @@
     "start": "razzle start",
     "build": "razzle build --noninteractive "
   },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
   "dependencies": {
     "@web3-react/core": "^6.1.9",
     "@web3-react/injected-connector": "^6.0.7",
