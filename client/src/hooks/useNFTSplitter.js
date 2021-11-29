@@ -49,15 +49,16 @@ export const useSplitterContract = (splitterAddress) => {
           if (pieces > 0) {
             let eventFilter = splitterContract.filters.TransferSingle()
             let events = await splitterContract.queryFilter(eventFilter)
-
             const userAddresses = events.map(event => {return event.args} ).map( arg => {return { owner: arg[0]}});
-           // let users;
-            const owners = await Promise.all(userAddresses.filter(e => e.owner !== account).map( async user => {
-                const balance =  await splitterContract.balanceOf(user.owner, tokenId);
-                return {
-                  owner: user.owner,
-                  pieces: balance.toString()
-                }
+            const ownersRes = userAddresses.filter(e => e.owner !== account).map(o => {return o.owner});
+            const uniq = a => [...new Set(a)];
+            const uniqueOwners = uniq(ownersRes);
+            const owners = await Promise.all(uniqueOwners.map( async owner => {
+              const balance =  await splitterContract.balanceOf(owner, tokenId);
+              return {
+                owner: owner,
+                pieces: balance.toString()
+              }
             }));
             console.log('events ->', owners );
 
@@ -76,9 +77,11 @@ export const useSplitterContract = (splitterAddress) => {
         setTxnStatus('NOT_SUBMITTED');
       }
     } catch (error) {
-      console.log(error);
+      if (error){ setErrorMessage(error.message );
+        console.log(error);}
       setTxnStatus('ERROR');
       setNFT({ status: 'ERROR', owners: []});
+
     }
 
   };
@@ -104,8 +107,8 @@ export const useSplitterContract = (splitterAddress) => {
       }
     } catch (error) {
       setTxnStatus('ERROR');
-      if (error) setErrorMessage(error.message );
-      console.log(error);
+      if (error){ setErrorMessage(error.message );
+      console.log(error);}
     }
   };
 
@@ -128,8 +131,8 @@ export const useSplitterContract = (splitterAddress) => {
       }
     } catch (error) {
       setTxnStatus('ERROR');
-      if (error) setErrorMessage(error.message );
-      console.log(error);
+      if (error){ setErrorMessage(error.message );
+        console.log(error);}
     }
   };
 
@@ -151,8 +154,8 @@ export const useSplitterContract = (splitterAddress) => {
       }
     } catch (error) {
       setTxnStatus('ERROR');
-      console.log(error);
-      if (error) setErrorMessage(error.message );
+      if (error){ setErrorMessage(error.message );
+        console.log(error);}
     }
   };
 
@@ -172,14 +175,14 @@ export const useSplitterContract = (splitterAddress) => {
       }
     } catch (error) {
       setTxnStatus('ERROR');
-      console.log(error);
-      if (error) setErrorMessage(error.message );
+      if (error){ setErrorMessage(error.message );
+        console.log(error);}
     }
   };
 
   useEffect(() => {
-    if (account) {
-      console.log('new account: ', account);
+    if (account && nft.nftAddress && nft.tokenId) {
+      console.log('new account: ', account, nft.nftAddress, nft.tokenId);
       getSplitterInfo(nft.nftAddress, nft.tokenId);
     }
   }, [account]);
