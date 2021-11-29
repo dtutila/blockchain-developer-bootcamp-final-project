@@ -6,7 +6,7 @@ import Card from '../../components/Card';
 
 import {useAppContext} from '../../AppContext';
 import Spinner from 'react-bootstrap/Spinner';
-
+import { formatUnits } from '@ethersproject/units';
 import useTransaction from '../../hooks/useTransaction';
 import FieldInput from '../../components/FieldInput';
 import {colors} from '../../theme';
@@ -14,6 +14,7 @@ import {useNFT} from '../../hooks/useNFT';
 import {useSplitterContract} from '../../hooks/useNFTSplitter';
 import {useWeb3React} from '@web3-react/core';
 import OwnersCard from './OwnersCard';
+import {BigNumber} from 'ethers';
 
 const Container = styled.div`
   display: flex;
@@ -56,6 +57,7 @@ const NFTCard = ({proxyAddress, nftAddress, tokenId, ...props}) => {
     const {txnStatus, setTxnStatus} = useTransaction();
     const [price, setPrice] = useState('');
     const [percentage, setPercentage] = useState('');
+    const [buyBackPrice, setBuyBackPrice] = useState('');
     const [approved, setApproved] = useState(false);
     const [pieces, setPieces] = useState('');
     const [value, setValue] = useState('');
@@ -73,6 +75,14 @@ const NFTCard = ({proxyAddress, nftAddress, tokenId, ...props}) => {
 
     console.log('txnStatus', txnStatus);
 
+    const calculateBuyBackPrice = () => {
+        const priceNumber = parseFloat(price);
+        const percentageNumber = parseFloat(percentage);
+        const p =  ( priceNumber * (1+ (percentageNumber /100)) ) ;
+
+        setBuyBackPrice(p.toFixed(4));
+        console.log('bback', p);
+    }
 
     useEffect(() => {
         getSplitterInfo(nftAddress, tokenId);
@@ -81,6 +91,9 @@ const NFTCard = ({proxyAddress, nftAddress, tokenId, ...props}) => {
         console.log('trader =>', nft);
         console.log('errorMessage =>', errorMessage);
     }, [nft, errorMessage]);
+    useEffect(() => {
+       calculateBuyBackPrice();
+    }, [price, calculateBuyBackPrice]);
 
     const continueHandler = () => {
         setTxnStatus('NOT_SUBMITTED')
@@ -177,10 +190,10 @@ const NFTCard = ({proxyAddress, nftAddress, tokenId, ...props}) => {
                         Create Split (3/3)
                     </Text>
                     <FieldInput value={pieces} setValue={setPieces} title="Pieces"/>
-                    <FieldInput value={price} setValue={setPrice} title={`Unit Price ${price ? '(Total price: ' + pieces * price+ ')': ''}`}/>
+                    <FieldInput value={price} setValue={setPrice} title={`Unit Price ${price ? '(Total NFT price: ' + pieces * price+ ' ETH)': ''}`}/>
                     <FieldInput value={percentage} setValue={setPercentage} title="Percentage" />
                     <Text bold block p12 center color={colors.primary_light} className="mb-3">
-                        {`${percentage ? '(You will pay: ' + (price * (price /100) + 1) +  ')': ''}`}
+                        {`${percentage ? '(You will pay: ' + buyBackPrice +  ') to buy back any piece': ''}`}
                     </Text>
                     <Button primary className="mt-3" onClick={handleSplitSubmit}>
                         Split

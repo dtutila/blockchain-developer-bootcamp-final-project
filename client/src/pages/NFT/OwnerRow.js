@@ -39,7 +39,7 @@ const OwnerRow = ({owner, pieces, buyPiecesHandler, isOwner, unitPrice, percenta
                 })
                 }</select>
             {isOwner && <button onClick={buyHandler} key={owner + 'b' + pieces}>Buy Back ({selectedPieces * unitPrice} ETH)</button>}
-            {!isOwner && <button onClick={buyHandler} key={owner + 'b' + pieces}>Buy ({(selectedPieces * unitPrice) * (1+ percentaje /100)} ETH)</button>}
+            {!isOwner && <button onClick={buyHandler} key={owner + 'b' + pieces}>Buy ({selectedPieces * (unitPrice + ( percentaje /100))} ETH)</button>}
         </ContainerRow>
     );
 }
