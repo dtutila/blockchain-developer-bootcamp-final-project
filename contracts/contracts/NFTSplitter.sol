@@ -329,7 +329,7 @@ contract NFTSplitter is
     // Fallback function is called when msg.data is not empty
     fallback() external payable {}
 
-    function getBalance() public view returns (uint256) {
+    function getBalance() external view returns (uint256) {
         return address(this).balance;
     }
 

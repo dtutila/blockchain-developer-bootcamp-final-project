@@ -10,7 +10,7 @@ const Splitter = () => {
     return (
         <Container className="container-fluid mt-2">
             {isWalletConnectModalOpen && <ConnectWalletModal />}
-            <SplitterCard nftAddress="" tokenId="" tittle="Create a new Splitter" />
+            <SplitterCard nftAddress="" tokenId="" tittle="Create a new Splitter (1/3)" />
         </Container>
     );
 };

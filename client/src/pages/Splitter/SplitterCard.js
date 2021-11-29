@@ -81,6 +81,7 @@ const SplitterCard = (props) => {
       <Container show>
         <Card style={{ maxWidth: 420, minHeight: 300 }}>
           <Text>Txn ERROR</Text>
+            <Text>Txn ERROR</Text>
           <Button onClick={() => setTxnStatus('NOT_SUBMITTED')}>Go Back</Button>
         </Card>
       </Container>

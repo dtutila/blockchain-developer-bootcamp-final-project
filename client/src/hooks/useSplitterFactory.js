@@ -4,12 +4,13 @@ import useIsValidNetwork from '../hooks/useIsValidNetwork';
 import { useWeb3React } from '@web3-react/core';
 import { useAppContext } from '../AppContext';
 import getFactory from '../abi/factory';
+import {useEffect} from 'react';
 
 
 
 
 export const useSplitterFactory = () => {
-  const { setCTokenBalance, setExchangeRate, setTxnStatus, setProxyAddress, exchangeRate } = useAppContext();
+  const { setTxnStatus, setProxyAddress, setErrorMessage } = useAppContext();
   const { account, library } = useWeb3React();
   const { isValidNetwork } = useIsValidNetwork();
   const {address, abi} = getFactory();
@@ -71,15 +72,16 @@ export const useSplitterFactory = () => {
       } catch (error) {
         setTxnStatus('ERROR');
         console.log('error', error);
+        if (error) setErrorMessage(error.message );
       }
     }
   };
 
-/*  useEffect(() => {
+  useEffect(() => {
     if (account) {
-      getCTokenExchangeRate();
+      console.log('new account: ', account);
     }
-  }, [account]);*/
+  }, [account]);
 
   return {
     getSplitters,

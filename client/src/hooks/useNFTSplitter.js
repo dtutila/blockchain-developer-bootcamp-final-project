@@ -3,7 +3,7 @@ import { useContract } from './useContract';
 import useIsValidNetwork from '../hooks/useIsValidNetwork';
 import { useWeb3React } from '@web3-react/core';
 import { useDispatch, useSelector } from 'react-redux';
-import { formatUnits, parseEther } from '@ethersproject/units';
+import {formatEther, formatUnits, parseEther} from '@ethersproject/units';
 import { useEffect } from 'react';
 
 import getSplitter from '../abi/nftsplitter';
@@ -18,7 +18,7 @@ export const useSplitterContract = (splitterAddress) => {
   const { isValidNetwork } = useIsValidNetwork();
   const { abi} = getSplitter();
   const splitterContract = useContract(splitterAddress, abi);
-  const { setNFT, setTxnStatus } = useAppContext();
+  const { setNFT, setTxnStatus, setErrorMessage, nft } = useAppContext();
 
   const getSplitterInfo = async ( nftAddress, tokenId) => {
 
@@ -26,13 +26,15 @@ export const useSplitterContract = (splitterAddress) => {
       setTxnStatus('LOADING');
       if (account && isValidNetwork) {
         const originalOwner = await splitterContract.originalOwner();
+        const tokenId = await splitterContract.tokenId();
         const signerOrProvider = account ? library.getSigner(account).connectUnchecked() : library;
         const nftContract = new Contract(nftAddress, nftabi, signerOrProvider);
         const approved = await nftContract.isApprovedForAll(originalOwner, splitterAddress);
         const nftName = await splitterContract.name();
         const nftBalance = await splitterContract.balanceOf(account, tokenId);
-
-        console.log('approved ->', approved, nftName, nftBalance);
+        //TransferSingle
+        const isOriginalOwner = account === originalOwner;
+        console.log('approved ->', approved, nftName, nftBalance, isOriginalOwner);
 
         if (approved){
           console.log('loading splitters');
@@ -40,25 +42,46 @@ export const useSplitterContract = (splitterAddress) => {
           const pieces = await splitterContract.pieces();
           const unitPrice = await splitterContract.unitPrice();
           const percentage = await splitterContract.buyPercentage();
-         // console.log('loaded', name, pieces.toNumber(), unitPrice.toNumber(), percentage.toNumber());
-          setNFT({ nftName, nftBalance, name, pieces, unitPrice, percentage, approved});
+
+
+          //setNFT({ nftName, nftBalance, name, pieces, unitPrice, percentage, approved});
           console.log(pieces > 0);
           if (pieces > 0) {
-            setTxnStatus('READY');
+            let eventFilter = splitterContract.filters.TransferSingle()
+            let events = await splitterContract.queryFilter(eventFilter)
+            const userAddresses = events.map(event => {return event.args} ).map( arg => {return { owner: arg[0]}});
+            const ownersRes = userAddresses.filter(e => e.owner !== account).map(o => {return o.owner});
+            const uniq = a => [...new Set(a)];
+            const uniqueOwners = uniq(ownersRes);
+            const owners = await Promise.all(uniqueOwners.map( async owner => {
+              const balance =  await splitterContract.balanceOf(owner, tokenId);
+              return {
+                owner: owner,
+                pieces: balance.toString()
+              }
+            }));
+            console.log('events ->', owners );
+
+            setNFT({ status: 'READY', originalOwner, isOriginalOwner, nftName, tokenId: tokenId.toString(), nftAddress, nftBalance:  nftBalance.toString(), approved, owners:owners, percentage: percentage.toString(), unitPrice: parseFloat(formatEther(unitPrice)).toPrecision(2), pieces: pieces.toString(), name  });
+            //setTxnStatus('READY');
           } else {
-            setTxnStatus('APPROVED');
+            setNFT({ status: 'APPROVED', originalOwner, nftName, isOriginalOwner, tokenId: tokenId.toString(), nftAddress, nftBalance: nftBalance.toString(), approved, owners: [], percentage: percentage.toString(), unitPrice: parseFloat(formatEther(unitPrice)).toPrecision(2), pieces: pieces.toString(), name  });
+
           }
 
         } else {
-          setNFT({ nftName, nftBalance, approved});
-          setTxnStatus('PENDING_APPROVAL');
+          setNFT({ status: 'PENDING_APPROVAL', nftName, tokenId: tokenId.toString(), nftBalance: nftBalance.toString(), approved, originalOwner, isOriginalOwner});
+
         }
 
-
+        setTxnStatus('NOT_SUBMITTED');
       }
     } catch (error) {
-      console.log(error);
+      if (error){ setErrorMessage(error.message );
+        console.log(error);}
       setTxnStatus('ERROR');
+      setNFT({ status: 'ERROR', owners: []});
+
     }
 
   };
@@ -84,7 +107,8 @@ export const useSplitterContract = (splitterAddress) => {
       }
     } catch (error) {
       setTxnStatus('ERROR');
-      console.log(error);
+      if (error){ setErrorMessage(error.message );
+      console.log(error);}
     }
   };
 
@@ -92,27 +116,23 @@ export const useSplitterContract = (splitterAddress) => {
     try {
       if (account && isValidNetwork) {
         setTxnStatus('LOADING');
-        console.log('buyBackPieces');
-        const trx = await splitterContract.splitMyNFT(from, amount, {
+        console.log('buyBackPieces', from, amount, paymentAmount);
+        const trx = await splitterContract.buyBackPieces(from, amount, {
           from: account,
           value: parseEther(paymentAmount)
         });
         trx.wait(1).then(
             res => {
-
               console.log('buyBackPieces res ->', res);
-              /* dispatcher({
-                 type: SPLITTER_CREATED,
-                 payload: { splitter:  splitterAddress}
-               });*/
-            }
+                  }
         );
 
         setTxnStatus('COMPLETE');
       }
     } catch (error) {
       setTxnStatus('ERROR');
-      console.log(error);
+      if (error){ setErrorMessage(error.message );
+        console.log(error);}
     }
   };
 
@@ -127,19 +147,15 @@ export const useSplitterContract = (splitterAddress) => {
         });
         trx.wait(1).then(
             res => {
-
               console.log('buyPiecesFromOwner res ->', res);
-              /* dispatcher({
-                 type: SPLITTER_CREATED,
-                 payload: { splitter:  splitterAddress}
-               });*/
-            }
+               }
         );
         setTxnStatus('COMPLETE');
       }
     } catch (error) {
       setTxnStatus('ERROR');
-      console.log(error);
+      if (error){ setErrorMessage(error.message );
+        console.log(error);}
     }
   };
 
@@ -152,28 +168,25 @@ export const useSplitterContract = (splitterAddress) => {
         });
         trx.wait(1).then(
             res => {
-
               console.log('withdrawOriginalNFT res ->', res);
-              /* dispatcher({
-                 type: SPLITTER_CREATED,
-                 payload: { splitter:  splitterAddress}
-               });*/
             }
         );
         setTxnStatus('COMPLETE');
       }
     } catch (error) {
       setTxnStatus('ERROR');
-      console.log(error);
+      if (error){ setErrorMessage(error.message );
+        console.log(error);}
     }
   };
 
- /* useEffect(() => {
-    if (account && setNFT) {
-      //geInfo();
+  useEffect(() => {
+    if (account && nft.nftAddress && nft.tokenId) {
+      console.log('new account: ', account, nft.nftAddress, nft.tokenId);
+      getSplitterInfo(nft.nftAddress, nft.tokenId);
     }
-  }, [setNFT]);
-*/
+  }, [account]);
+
   return {
     splitMyNFT,
     buyBackPieces,
