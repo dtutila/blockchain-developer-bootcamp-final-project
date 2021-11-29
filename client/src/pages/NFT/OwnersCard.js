@@ -30,6 +30,7 @@ const OwnersCard = (props) => {
                   {props.nftInfo.owners.map(e => {
                     return (
                      <OwnerRow key={e.owner+ 'row'} owner={e.owner}
+                               isOwner={props.nftInfo.isOriginalOwner}
                                pieces={e.pieces}
                                unitPrice={props.nftInfo.unitPrice}
                                percentage={props.nftInfo.percentage}
