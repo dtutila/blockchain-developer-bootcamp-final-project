@@ -19,8 +19,10 @@ const ConnectBtn2 = styled(Button).attrs({ variant: 'outline-dark' })``;
 const ConnectBtn = styled.button`
   /* Adapt the colors based on primary prop */
   background: ${colors.primary_dark};
-  color: ${props => props.primary ? "white" : "palevioletred"};
-
+  color: white;
+  font-size: 1em;
+  border: 2px solid;
+  border-radius: 3px;
 
 `;
 

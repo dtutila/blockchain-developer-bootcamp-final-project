@@ -44,7 +44,7 @@ const ContainerRow = styled.div`
 const Button = styled.button`
   /* Adapt the colors based on primary prop */
   background: ${colors.primary_dark};
-  color: ${props => props.primary ? 'white' : 'palevioletred'};
+  color: white;
 
   font-size: 1em;
   margin: 1em;
