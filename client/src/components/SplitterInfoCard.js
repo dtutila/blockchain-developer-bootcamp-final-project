@@ -22,19 +22,19 @@ const BalanceCard = () => {
     return (
 
         <Card style={{maxWidth: 320}}>
-            <Text block color={colors.primary_light}>
+                     <Text block bold t8 color={colors.primary_light}>
                 Name: {nftInfo.name}
             </Text>
-            <Text block color={colors.primary_light}>
+            <Text block t8 color={colors.primary_light}>
                 Unit Price: {nftInfo.unitPrice} ETH
             </Text>
-            <Text block color={colors.primary_light}>
+            <Text block t8 color={colors.primary_light}>
                 Pieces: {nftInfo.pieces}
             </Text>
-            <Text block color={colors.primary_light}>
+            <Text block t8 color={colors.primary_light}>
                 Extra percentage: {nftInfo.percentage}%
             </Text>
-            <Text block color={colors.primary_light}>
+            <Text block t8 color={colors.primary_light}>
                 Original NFT Address: {shortenAddress(nftInfo.nftAddress).toUpperCase()}
             </Text>
         </Card>

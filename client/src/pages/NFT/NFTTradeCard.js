@@ -13,13 +13,26 @@ import {colors} from '../../theme';
 import {useNFT} from '../../hooks/useNFT';
 import {useSplitterContract} from '../../hooks/useNFTSplitter';
 import {useWeb3React} from '@web3-react/core';
-import SplitterInfoCard from '../../components/SplitterInfoCard';
+import OwnersCard from './OwnersCard';
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding-top: 100px;
+  padding-top: 10px;
+  -webkit-box-align: center;
+  align-items: center;
+  flex: 1 1 0%;
+  overflow: hidden auto;
+  z-index: 1;
+`;
+
+const ContainerRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  padding-top: 10px;
+  padding-left: 10px;
   -webkit-box-align: center;
   align-items: center;
   flex: 1 1 0%;
@@ -58,7 +71,7 @@ const NFTCard = ({proxyAddress, nftAddress, tokenId, ...props}) => {
     } = useSplitterContract(proxyAddress);
     //loading
 
-    console.log('prx', proxyAddress);
+    console.log('txnStatus', txnStatus);
 
     useEffect(() => {
         getSplitterInfo(nftAddress, tokenId);
@@ -69,7 +82,7 @@ const NFTCard = ({proxyAddress, nftAddress, tokenId, ...props}) => {
 
     const handleNFTApprovalSubmit = () => {
         approve(nftAddress, tokenId, proxyAddress).then(() => {
-                setTxnStatus('APPROVED');
+               // setTxnStatus('APPROVED');
                 console.log('approved!! ');
                 setApproved(true);
             }
@@ -79,34 +92,30 @@ const NFTCard = ({proxyAddress, nftAddress, tokenId, ...props}) => {
     const handleSplitSubmit = () => {
         //(tokenId, price, percentage, pieces, initialSupply, lockTime)
         splitMyNFT(tokenId, price, percentage, pieces, pieces, 0).then(() => {
-                setTxnStatus('READY');
+
                 console.log('approved!!');
                 setApproved(true);
             }
         );
     };
-    const handleBuySubmit = () => {
+    const handleBuySubmit = (from, pieces, value) => {
         //(tokenId, price, percentage, pieces, initialSupply, lockTime)
         buyPiecesFromOwner(pieces, value).then(() => {
-                setTxnStatus('READY');
                 console.log('handleBuySubmit!!');
                 setApproved(true);
             }
         );
     };
-    const handleBuyBackSubmit = () => {
-
-        buyBackPieces(account2, pieces, value, 0).then(() => {
-                setTxnStatus('READY');
+    const handleBuyBackSubmit = (from, pieces, value) => {
+        buyBackPieces(from, pieces, value).then(() => {
                 console.log('buyBackPieces!!');
                 setApproved(true);
             }
         );
     };
     const handleWithdrawSubmit = () => {
-        //(tokenId, price, percentage, pieces, initialSupply, lockTime)
         withdrawOriginalNFT().then(() => {
-                setTxnStatus('READY');
+
                 console.log('handleWithdrawSubmit!!');
                 setApproved(true);
             }
@@ -124,7 +133,7 @@ const NFTCard = ({proxyAddress, nftAddress, tokenId, ...props}) => {
         );
     }
 
-    if (txnStatus === 'COMPLETE') {
+    if (txnStatus === 'COMPLETE'  ) {
         return (
             <Container show>
                 <Card style={{maxWidth: 420, minHeight: 400}}>
@@ -148,7 +157,7 @@ const NFTCard = ({proxyAddress, nftAddress, tokenId, ...props}) => {
         );
     }
 
-    if (txnStatus === 'PENDING_APPROVAL') {
+  /*  if (txnStatus === 'PENDING_APPROVAL') {
         return (
             <Container show>
                 <Card style={{maxWidth: 420, minHeight: 400}}>
@@ -171,19 +180,21 @@ const NFTCard = ({proxyAddress, nftAddress, tokenId, ...props}) => {
                 </Card>
             </Container>
         );
-    }
+    }*/
 
-    if (txnStatus === 'APPROVED') {
+    if ( (txnStatus === 'COMPLETE' || txnStatus === 'NOT_SUBMITTED' )&& nft.status === 'APPROVED') {
         return (
             <Container show>
                 <Card style={{maxWidth: 420, minHeight: 400}}>
-                    <Text bold block t2 color={colors.primary_light} className="mb-3">
-                        Split my NFT
+                    <Text bold block t2 center color={colors.primary_light} className="mb-3">
+                        Create Split (3/3)
                     </Text>
                     <FieldInput value={pieces} setValue={setPieces} title="Pieces"/>
-                    <FieldInput value={price} setValue={setPrice} title="Price"/>
-                    <FieldInput value={percentage} setValue={setPercentage} title="Percentage"/>
-
+                    <FieldInput value={price} setValue={setPrice} title={`Unit Price ${price ? '(Total price: ' + pieces * price+ ')': ''}`}/>
+                    <FieldInput value={percentage} setValue={setPercentage} title="Percentage" />
+                    <Text bold block p12 center color={colors.primary_light} className="mb-3">
+                        {`${percentage ? '(You will pay: ' + (price * (price /100) + 1) +  ')': ''}`}
+                    </Text>
                     <Button primary className="mt-3" onClick={handleSplitSubmit}>
                         Split
                     </Button>
@@ -194,21 +205,22 @@ const NFTCard = ({proxyAddress, nftAddress, tokenId, ...props}) => {
     }
 
 
-    if (txnStatus === 'READY') {
+    if ((txnStatus === 'COMPLETE' || txnStatus === 'NOT_SUBMITTED' )&& nft.status === 'READY') {
         return (
-            <Container show>
+            <ContainerRow show>
+
 
                 <Card style={{maxWidth: 420, minHeight: 400}}>
-                    <Text bold block t2 color={colors.primary_light} className="mb-3">
+                    <Text bold block t2  center color={colors.primary_light} className="mb-3">
                         Trade {nft.name}
                     </Text>
                     <FieldInput value={pieces} setValue={setPieces} title="Pieces"/>
                     <FieldInput value={value} setValue={setValue} title="eth"/>
 
 
-                    <Button primary className="mt-3" onClick={handleBuySubmit}>
+                  {/*  <Button primary className="mt-3" onClick={handleBuySubmit}>
                         Buy Pieces
-                    </Button>
+                    </Button>*/}
                     <Button primary className="mt-3" onClick={handleBuyBackSubmit}>
                         Buy BACK
                     </Button>
@@ -216,16 +228,20 @@ const NFTCard = ({proxyAddress, nftAddress, tokenId, ...props}) => {
                         Withdraw
                     </Button>
                 </Card>
-            </Container>
+
+                <OwnersCard nftInfo={nft} buyHandler={handleBuySubmit}/>
+
+
+            </ContainerRow>
         );
 
     }
 
     return (
         <Container show>
-            <Card style={{maxWidth: 420, minHeight: 400}}>
+            <Card style={{maxWidth: 480, minHeight: 160}}>
                 <Text bold block t2 color={colors.primary_light} className="mb-3">
-                    -------
+                    Approve contract  (Step 2/3)
                 </Text>
 
 
@@ -234,6 +250,7 @@ const NFTCard = ({proxyAddress, nftAddress, tokenId, ...props}) => {
                 </Button>
             </Card>
         </Container>
+
     );
 
 

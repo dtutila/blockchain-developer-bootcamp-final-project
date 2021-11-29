@@ -57,25 +57,26 @@ export const useSplitterContract = (splitterAddress) => {
                   pieces: balance.toString()
                 }
             }));
-            //console.log('events ->', owners );
+            console.log('events ->', owners );
 
-            setNFT({ nftName, nftAddress, nftBalance, approved, owners:owners, percentage: percentage.toString(), unitPrice: parseFloat(formatEther(unitPrice)).toPrecision(2), pieces: pieces.toString(), name  });
-            setTxnStatus('READY');
+            setNFT({ status: 'READY', nftName, nftAddress, nftBalance, approved, owners:owners, percentage: percentage.toString(), unitPrice: parseFloat(formatEther(unitPrice)).toPrecision(2), pieces: pieces.toString(), name  });
+            //setTxnStatus('READY');
           } else {
-            setNFT({ nftName, nftAddress, nftBalance, approved, owners: [], percentage: percentage.toString(), unitPrice: parseFloat(formatEther(unitPrice)).toPrecision(2), pieces: pieces.toString(), name  });
-            setTxnStatus('APPROVED');
+            setNFT({ status: 'APPROVED', nftName, nftAddress, nftBalance, approved, owners: [], percentage: percentage.toString(), unitPrice: parseFloat(formatEther(unitPrice)).toPrecision(2), pieces: pieces.toString(), name  });
+
           }
 
         } else {
-          setNFT({ nftName, nftBalance, approved});
-          setTxnStatus('PENDING_APPROVAL');
+          setNFT({ status: 'PENDING_APPROVAL', nftName, nftBalance, approved});
+
         }
 
-       // setTxnStatus('COMPLETE');
+        setTxnStatus('NOT_SUBMITTED');
       }
     } catch (error) {
       console.log(error);
       setTxnStatus('ERROR');
+      setNFT({ status: 'ERROR', owners: []});
     }
 
   };
