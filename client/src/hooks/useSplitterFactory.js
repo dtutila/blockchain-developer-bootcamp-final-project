@@ -4,6 +4,7 @@ import useIsValidNetwork from '../hooks/useIsValidNetwork';
 import { useWeb3React } from '@web3-react/core';
 import { useAppContext } from '../AppContext';
 import getFactory from '../abi/factory';
+import {useEffect} from 'react';
 
 
 
@@ -76,11 +77,11 @@ export const useSplitterFactory = () => {
     }
   };
 
-/*  useEffect(() => {
+  useEffect(() => {
     if (account) {
-      getCTokenExchangeRate();
+      console.log('new account: ', account);
     }
-  }, [account]);*/
+  }, [account]);
 
   return {
     getSplitters,

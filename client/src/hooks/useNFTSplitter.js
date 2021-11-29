@@ -18,7 +18,7 @@ export const useSplitterContract = (splitterAddress) => {
   const { isValidNetwork } = useIsValidNetwork();
   const { abi} = getSplitter();
   const splitterContract = useContract(splitterAddress, abi);
-  const { setNFT, setTxnStatus, setErrorMessage } = useAppContext();
+  const { setNFT, setTxnStatus, setErrorMessage, nft } = useAppContext();
 
   const getSplitterInfo = async ( nftAddress, tokenId) => {
 
@@ -176,6 +176,13 @@ export const useSplitterContract = (splitterAddress) => {
       if (error) setErrorMessage(error.message );
     }
   };
+
+  useEffect(() => {
+    if (account) {
+      console.log('new account: ', account);
+      getSplitterInfo(nft.nftAddress, nft.tokenId);
+    }
+  }, [account]);
 
   return {
     splitMyNFT,
