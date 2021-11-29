@@ -21,7 +21,7 @@ const BalanceCard = () => {
 
     return (
         <React.Fragment>
-        {nftInfo.tokenId && <Card style={{maxWidth: 320}}>
+        {nftInfo.tokenId && account && <Card style={{maxWidth: 320}}>
                      <Text block bold t8 color={colors.primary_light}>
                 Name: {nftInfo.name}
             </Text>
