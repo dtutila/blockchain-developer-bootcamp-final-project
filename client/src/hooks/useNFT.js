@@ -1,15 +1,8 @@
 import { useContract } from './useContract';
-
 import useIsValidNetwork from '../hooks/useIsValidNetwork';
 import { useWeb3React } from '@web3-react/core';
-import { useDispatch, useSelector } from 'react-redux';
-import { formatUnits, parseEther } from '@ethersproject/units';
-import { useEffect } from 'react';
-
 import getNFT from '../abi/nft';
-
 import {useAppContext} from '../AppContext';
-
 
 export const useNFT = (nftAddress) => {
   const {  setTxnStatus } = useAppContext();
@@ -19,16 +12,8 @@ export const useNFT = (nftAddress) => {
   const nftContract = useContract(nftAddress, abi);
   let name = '';
   let isApproved = false;
-  // const fetchCTokenBalance = async () => {
-  //   const cTokenBalance = await cTokenContract.balanceOf(account);
-  //   setCTokenBalance(formatUnits(cTokenBalance, 8));
-  // };
 
   const getNFTInfo = async (nftAddress, tokenId, splitterAddress) => {
-
-
-
-
     try {
       if (account && isValidNetwork) {
         console.log('loading splitters');
@@ -45,8 +30,6 @@ export const useNFT = (nftAddress) => {
   };
 
   const approve = async (nftAddress, tokenId, splitterAddress) => {
-
-
     try {
       if (account && isValidNetwork) {
         console.log('approving');
@@ -54,14 +37,9 @@ export const useNFT = (nftAddress) => {
         const trx =  await nftContract.setApprovalForAll(splitterAddress, true, {
           from: account
         });
-        trx.wait(1).then(
+        await trx.wait(1).then(
             res => {
-
               console.log('approve NFT ->', res);
-             /* dispatcher({
-                type: SPLITTER_CREATED,
-                payload: { splitter:  splitterAddress}
-              });*/
             }
         );
         console.log('approved done');
@@ -74,13 +52,6 @@ export const useNFT = (nftAddress) => {
     }
 
   };
-
-
-  /*  useEffect(() => {
-      if (account) {
-        getCTokenExchangeRate();
-      }
-    }, [account]);*/
 
   return {
     getNFTInfo,

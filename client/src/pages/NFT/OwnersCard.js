@@ -23,7 +23,7 @@ const OwnersCard = (props) => {
     return (
         <Card style={{maxWidth: 420, minHeight: 400}}>
             <Text bold block t2  center color={colors.primary_light} className="mb-3">
-                 { props.nftInfo.isOriginalOwner ? 'Buy Back' : ' Buy From Original Owner'}
+                 { props.nftInfo.isOriginalOwner ? 'Buy Back' : ' Buy Pieces'}
             </Text>
 
                 <Ul key={props.nftInfo.isOriginalOwner+ 'rowUL'} >

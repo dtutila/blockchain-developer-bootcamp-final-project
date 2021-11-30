@@ -5,7 +5,7 @@ import { useWeb3React } from '@web3-react/core';
 import { useAppContext } from '../AppContext';
 import getFactory from '../abi/factory';
 import {useEffect} from 'react';
-
+const confirmations = 1;
 
 
 
@@ -58,7 +58,7 @@ export const useSplitterFactory = () => {
         const txn = await factoryContract.createNFTSplitter(nftAddress, tokenId, {
           from: account
         });
-         txn.wait(1).then(
+         await txn.wait(confirmations).then(
              res => {
                splitterAddress = res.events.filter(x => x.event && x.event === 'ProxyCreated')[0].args[1];
                console.log('splitterAddress', splitterAddress);
