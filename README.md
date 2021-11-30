@@ -72,7 +72,7 @@ truffle test --network development
 
 #### Contract deployment
 ##### Test Network
-1. Start ganache-cli (if it's not running already)
+1. Start ganache-cli (if not running)
 ```
 ganache-cli
 ```
@@ -122,7 +122,7 @@ npm start
 ## Project Description
 ### NFT Splitter 
 
-A contract that allows the user to divide a NFT into multiple pieces.
+A contract that allows the user to divide a NFT into multiple pieces and trace the pieces with another user.
 
 ### Use case scenario
 Alice wants to sell a part of his favorite NFT to get some liquidity but she also wants to have the possibility of bought back the NFT any piece that she sold.
@@ -146,8 +146,7 @@ Bob will be able to buy more pieces or all the pieces after the lock time is ove
 Anyone who owns all the pieces will be able to assemble the original NFT.
 
 ## Proposed solution
-To build a decentralized app to allow users to split a NFT and trade the pieces inside the app. 
-
+To build a decentralized app to allow users to split a NFT and trade the pieces inside the app.
 ## Workflow example
 
 **Scenario 1**
@@ -159,3 +158,8 @@ To build a decentralized app to allow users to split a NFT and trade the pieces 
 4- Bob is interested to buy Alice's NFT, so he buys one piece.
 
 6- Later Bob buys all the other NFT pieces and he will be able to withdraw the original NFT to his account.
+
+
+## Roadmap
+* Add support to allow  multiple user to buy pieces 
+* Improve UX/UI
