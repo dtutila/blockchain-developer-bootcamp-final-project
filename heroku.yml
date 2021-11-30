@@ -1,6 +1,6 @@
 build:
   docker:
-    worker: client/Dockerfile.heroku
+    web: client/Dockerfile.heroku
   config:
     NODE_ENV: production
 
