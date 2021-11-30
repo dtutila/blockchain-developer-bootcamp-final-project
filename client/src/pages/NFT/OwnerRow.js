@@ -34,7 +34,7 @@ const Select = styled.select`
   color:  white;
   border: 2px solid;
 `;
-const OwnerRow = ({owner, pieces,  unitPrice, buyPiecesHandler, isOwner, percentage}) => {
+const OwnerRow = ({owner, pieces,  unitPrice, buyHandler, buyBackHandler, isOwner, percentage, originalOwner}) => {
     const [selectedPieces, setSelectedPieces] = useState('1');
      const [selectedPrice, setSelectedPrice] = useState('1');
     const rowOwner = shortenAddress(owner);
@@ -42,7 +42,7 @@ const OwnerRow = ({owner, pieces,  unitPrice, buyPiecesHandler, isOwner, percent
         const value = getPrice().toString();
         setSelectedPrice(value + ' ETH')
     },[selectedPieces])
-    console.log('OwnerRow', owner, pieces,  unitPrice, percentage);
+    console.log('OwnerRow', owner, originalOwner, pieces,  unitPrice, percentage);
     const getPrice = () =>{
         const pieces = new BigNumber(selectedPieces);
         const price = new BigNumber(unitPrice);
@@ -53,25 +53,33 @@ const OwnerRow = ({owner, pieces,  unitPrice, buyPiecesHandler, isOwner, percent
 
         return isOwner ? buyBackValue : buyValue;
     }
-    const buyHandler = ( ) => {
+    const rowBuyPiecesHandler = ( ) => {
         const value = getPrice();
-        console.log('row', owner, selectedPieces, value.toNumber());
-        buyPiecesHandler(owner, selectedPieces, value.toString());
+        console.log('rowBuyPiecesHandler', originalOwner === owner, isOwner, selectedPieces, value.toNumber());
+        if (isOwner) {
+            buyBackHandler(owner, selectedPieces, value.toString());
+        } else {
+
+            buyHandler(owner, selectedPieces, value.toString());
+
+
+        }
+
     };
     const onPiecesSelected = (event) => {
         setSelectedPieces(  event.target.value)
 
     }
     return (
-        <ContainerRow key={owner + 'li' + pieces} style={{minWidth: 600 }}>
+        <ContainerRow key={owner + 'li-' + pieces} style={{minWidth: 600 }}>
             <Text block t12  center color={colors.primary_light} className="mb-3">{rowOwner} [{pieces} pieces]</Text>
             <Select key={owner + 'select' + pieces} value={selectedPieces} onChange={onPiecesSelected}>
                 {Array(parseInt(pieces)).fill(1).map((x, i) =>{
                     return <option value={i+1}>{i+1}</option>
                 })
                 }</Select>
-            {isOwner && <Button onClick={buyHandler} key={owner + 'b' + pieces}>Buy Back ({selectedPrice})</Button>}
-            {!isOwner && <Button onClick={buyHandler} key={owner + 'b' + pieces}>Buy ({selectedPrice})</Button>}
+            {isOwner && <Button onClick={rowBuyPiecesHandler} key={owner + 'bb' + pieces}>Buy Back ({selectedPrice})</Button>}
+            {!isOwner && <Button onClick={rowBuyPiecesHandler} key={owner + 'b' + pieces}>Buy ({selectedPrice})</Button>}
         </ContainerRow>
     );
 }

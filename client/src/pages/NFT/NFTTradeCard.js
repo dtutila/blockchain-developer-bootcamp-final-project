@@ -119,7 +119,7 @@ const NFTCard = ({proxyAddress, nftAddress, tokenId, ...props}) => {
         );
     };
     const handleBuySubmit = (from, pieces, value) => {
-        //(tokenId, price, percentage, pieces, initialSupply, lockTime)
+        console.log('handleBuySubmit!!', from, pieces, value);
         buyPiecesFromOwner(pieces, value).then(() => {
                 console.log('handleBuySubmit!!');
                 setApproved(true);
@@ -130,7 +130,7 @@ const NFTCard = ({proxyAddress, nftAddress, tokenId, ...props}) => {
         setTxnStatus('LOADING');
         console.log('handleBuyBackSubmit!!', from, pieces, value);
         buyBackPieces(from, pieces, value).then(() => {
-                console.log('buyBackPieces!!');
+                console.log('buyBackPieces!!!!!!!!');
                 setApproved(true);
             }
         );
@@ -222,7 +222,7 @@ const NFTCard = ({proxyAddress, nftAddress, tokenId, ...props}) => {
                 </Card>
                 }
 
-                {nft.pieces !== nft.nftBalance  && <OwnersCard nftInfo={nft} buyHandler={nft.isOriginalOwner? handleBuyBackSubmit : handleBuySubmit}/>}
+                {nft.pieces !== nft.nftBalance  && <OwnersCard nftInfo={nft} buyHandler= {handleBuySubmit} buyBackHandler={handleBuyBackSubmit}/>}
 
 
             </Container>

@@ -24,7 +24,7 @@ const ProxyLoader = () => {
 
     useEffect(() => {
         if (account) {
-            console.log('proxy....');
+            console.log('proxy....', proxyAddress);
             if (!proxyAddress) {
                 getProxyAddressByNFT(params.nftAddress, params.tokenId);
                 console.log('no proxy ....');

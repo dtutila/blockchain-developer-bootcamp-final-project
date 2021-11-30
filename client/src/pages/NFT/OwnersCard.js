@@ -15,10 +15,16 @@ const OwnersCard = (props) => {
     console.log('props', props);
     const {enteredPrice, setEnteredPrice} = useState('');
     const {selectedPieces, setSelectedPieces} = useState('1');
-    const buyPiecesHandler = (address, amount, value) => {
-        console.log('buyPiecesHandler',address, amount, value);
+    const buyHandler = (address, amount, value) => {
+        console.log('OwnersCard:buyPiecesHandler',address, amount, value);
         props.buyHandler(address, amount, value);
     }
+
+    const buyBackHandler = (address, amount, value) => {
+        console.log('buyPiecesHandler',address, amount, value);
+        props.buyBackHandler(address, amount, value);
+    }
+
     console.log('owners', props.nftInfo.owners);
     return (
         <Card style={{maxWidth: 420, minHeight: 400}}>
@@ -30,11 +36,14 @@ const OwnersCard = (props) => {
                   {props.nftInfo.owners.map(e => {
                     return (
                      <OwnerRow key={e.owner+ 'row'} owner={e.owner}
+                               originalOwner={props.nftInfo.originalOwner}
                                isOwner={props.nftInfo.isOriginalOwner}
                                pieces={e.pieces}
                                unitPrice={props.nftInfo.unitPrice}
                                percentage={props.nftInfo.percentage}
-                               buyPiecesHandler={buyPiecesHandler}/>
+                               buyHandler={buyHandler}
+                               buyBackHandler={buyBackHandler}
+                               />
 
                     )})
 

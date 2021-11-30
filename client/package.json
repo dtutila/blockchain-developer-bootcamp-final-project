@@ -1,7 +1,7 @@
 {
   "name": "consensys-hackathon-build-a-dapp",
   "version": "1.0.0",
-  "license": "UNLICENSED",
+  "license": "MIT",
   "scripts": {
     "start": "razzle start",
     "build": "razzle build --noninteractive ",
@@ -26,7 +26,6 @@
     "bootstrap": "^4.6.0",
     "dotenv": "^10.0.0",
     "ethers": "^5.1.0",
-    "razzle-heroku": "^3.0.0",
     "react": "^17.0.1",
     "react-bootstrap": "^1.5.2",
     "react-bootstrap-icons": "^1.4.0",
