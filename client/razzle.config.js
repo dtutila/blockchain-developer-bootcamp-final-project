@@ -1,3 +1,4 @@
+
 module.exports = {
   options: {
     buildType: 'spa',
@@ -12,5 +13,5 @@ module.exports = {
     // }
 
     return config;
-  },
+  }
 };
