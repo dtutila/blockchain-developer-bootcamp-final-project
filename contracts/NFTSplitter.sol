@@ -202,8 +202,17 @@ contract NFTSplitter is
         _safeTransferFrom(from, to, id, amount, data);
     }
 
+    /**
+     * @notice method used by the original NFT to initiate contract state
+     * @dev it transfers the original nft to this contract and creates a new
+     * nft than can be traded inside the app
+     * @param _tokenId _tokenId original nft's tokenId
+     * @param _price amount of tokens to transfer
+     * @param _buyPercentage current token owner
+     * @param _pieces amount of new tokens to mint
+     */
     function splitMyNFT(
-        uint256 _tokenId,
+        uint256 _tokenId, //TODO: remove this parameter
         uint256 _price,
         uint128 _buyPercentage,
         uint8 _pieces
@@ -214,7 +223,7 @@ contract NFTSplitter is
         require(_buyPercentage > 0, 'NFTSplitter: invalid percentage ' );
 
         unitPrice = _price;
-        tokenId = _tokenId;
+        tokenId = _tokenId; //TODO: remove this parameter, tokenId was instantiated in proxy creation
         pieces = _pieces;
         buyPercentage = _buyPercentage;
         originalOwner = msg.sender;
@@ -253,11 +262,11 @@ contract NFTSplitter is
 
     /**
      * @dev method used by the original NFT to buy back any piece that was sold
-     *
+     * @param _from current token owner
+     * @param amount amount of tokens to transfer
      */
-
     function buyBackPieces(address _from, uint256 amount) external payable onlyOriginalNFTOwner nonReentrant {
-
+        //TODO: add support to interact with multiple users, currently this contracts only supports interactions between the original nft owner and one buyer
         uint buyBackPrice = (unitPrice + (unitPrice * buyPercentage  / 100 )) * amount;
         require(msg.value  >= buyBackPrice, 'NFTSplitter: insufficient value for this transaction');
 
@@ -274,6 +283,7 @@ contract NFTSplitter is
      *
      */
     function buyPiecesFromOwner( uint256 amount) external payable notOriginalNFTOwner nonReentrant {
+        //TODO: add support to interact with multiple users, currently this contracts only supports interactions between the original nft owner and one buyer
         uint currentSupply = balanceOf(originalOwner, tokenId);
         require(currentSupply  >= amount, 'NFTSplitter: not enough pieces to buy');
         require(originalOwner != msg.sender, 'NFTSplitter: you are the current nft owner');
@@ -293,7 +303,6 @@ contract NFTSplitter is
      * This method can only be executed if the address owns all the pieces.
      *
      */
-   // event log(address currentOwner, uint amount);
     function withdrawOriginalNFT() public ownsAllPieces nonReentrant {
          //burn pieces
         _burn(msg.sender, tokenId, pieces);
