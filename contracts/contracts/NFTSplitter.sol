@@ -223,6 +223,8 @@ contract NFTSplitter is
         //lockEndDate = block.timestamp + (_lockTimeInDays * 1 days);
         //initialSellSupply = _initialSellAmount;
 
+        _mint(msg.sender, tokenId, pieces, "");
+
         //as name and symbol are not part of ERC1155
         //contract needs to catch any error executing the functions
         //if there is any error the state of the variables does not change
@@ -238,7 +240,6 @@ contract NFTSplitter is
             emit Log("NFTSplitter: external call failed");
         }
 
-        _mint(msg.sender, tokenId, pieces, "");
         ERC1155(originalNFT).safeTransferFrom(
             msg.sender,
             address(this),
