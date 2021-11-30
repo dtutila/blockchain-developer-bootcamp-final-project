@@ -21,14 +21,14 @@ contract NFTSplitterAdmin {
         _;
     }
     /**
-    * @deb validates that only factory contract can execute the function
+    * @dev validates that only factory contract can execute the function
     */
     modifier onlyFactory() {
         require(msg.sender == addressStorage[FACTORY_ADDRESS], "NFTSplitterAdmin: Only Factory can run this method.");
         _;
     }
     /**
-       * @deb validates that only factory or the owner of Admin contract can execute the function
+       * @dev validates that only factory or the owner of Admin contract can execute the function
     */
     modifier onlyOwnerOrFactory() {
         require(msg.sender == owner || msg.sender == addressStorage[FACTORY_ADDRESS],
