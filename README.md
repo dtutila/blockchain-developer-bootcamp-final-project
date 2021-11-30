@@ -68,7 +68,7 @@ ganache-cli
 ```
 truffle test --network development
 ```
-![Test run results example](https://github.com/dtutila/blockchain-developer-bootcamp-final-project/assets/tests.png)
+![Test run results example](https://github.com/dtutila/blockchain-developer-bootcamp-final-project/blob/main/assets/tests.png)
 
 #### Contract deployment
 ##### Test Network
