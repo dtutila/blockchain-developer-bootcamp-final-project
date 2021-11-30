@@ -10,7 +10,7 @@ NFTSplitter and NFTSplitterProxy contracts that inherits or implement interfaces
 
 ### Contract Descriptions
 * **NFTSplitter**: it contains the logic of the application, this contract can be upgradable later.
-* **NFTSplitterStorage**: this contract contains the variables used in the logic. This contract helps to avoid variable collision when `delegateCall`  function is executed.
+* **NFTSplitterStorage**: this contract contains the variables used in the logic. This contract helps to avoid storage collision when `delegateCall`  function is executed.
 * **NFTSplitterProxy**: this contract delegates all the logic execution to NFTSplitter contract.
 * **ERC1155**: custom implementation of ERC115 contract, this contract is based on the Openzeppeling's ERC1155 contract.
 * **NFTSplitterAdmin**: this contracts manages the settings of the application, it stores the factory contract address and registers the address of the proxy contracts created by the factory. Also, this contract can pause and unpause the creation of new proxies in the factory and can be use to upgrade the address of a new implementation of NFTSplitter.

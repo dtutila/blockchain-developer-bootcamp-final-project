@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 /**
  * @dev this contract has the state variables of the NFTSplitter and proxy contract
- * it helps to avoid variable collision when a delegate call is used
+ * it helps to avoid storage collision when  delegate call is used
  *
  */
 pragma solidity 0.8.3;

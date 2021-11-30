@@ -32,6 +32,10 @@ contract NFTSplitterProxy is NFTSplitterStorage, Proxy {
         tokenId = _tokenId;
     }
 
+    /**
+    * @notice returns the NFTSplitter implementation to use during delegateCall function
+    *
+    */
     function _implementation() internal view override returns (address) {
         return implementation;
     }

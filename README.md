@@ -107,8 +107,15 @@ admin->    0xee870e305b14865ba7881F95fC459Eb55Ad8b49F
 factory->  0x26dD43A43071D70245312e2491311E11B2676F0e
 base->     0x2E2412D256a85f081E85c19858bc5D65765d85bD
 ```
-4. Update client/src/abi/factory.js with address
-5. run npm start
+4. Update [client/src/abi/factory.js](https://github.com/dtutila/blockchain-developer-bootcamp-final-project/blob/main/client/src/abi/factory.js) with factory address
+```
+const address = '0x26dD43A43071D70245312e2491311E11B2676F0e';
+
+```
+5. Run npm start
+```
+npm start
+```
 6. Open [http://localhost:3000/](http://localhost:3000/)
 
 
