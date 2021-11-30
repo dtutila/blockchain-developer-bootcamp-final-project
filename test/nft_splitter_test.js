@@ -50,8 +50,11 @@ contract('NFTSplitter (Base contract)', function (accounts) {
         await aliceNFT.setURI('URI:id', {from: alice});
 
     })
-
+    /**
+     *  Verify that NFTSplitter address is configured in factory
+     */
     it('00- NFT Splitter Base contract should be set up in factory contract', async function () {
+
         const baseAddress = await factoryContract.getNFTSplitterBase.call()
 
         assert.equal(
@@ -61,7 +64,9 @@ contract('NFTSplitter (Base contract)', function (accounts) {
         );
     })
 
-
+    /**
+     *  Verify that NFT owner can create a new proxy contract
+     */
     it('01- NFT Owner should be able to create a new NFT splitter proxy ', async function () {
         const splitterProxy = await factoryContract.createNFTSplitter(aliceNFT.address, tokenId , {
 
@@ -91,6 +96,9 @@ contract('NFTSplitter (Base contract)', function (accounts) {
             'Settings value should be sale as admin contract',
         );
     });
+    /**
+     *  Verify that NFT owner cannot create a new proxy contract if pause state is `paused`
+     */
     it('02- NFT Splitter creation is not available while dapp is paused ', async function () {
 
         await adminContract.pause( {from: owner});
@@ -109,6 +117,11 @@ contract('NFTSplitter (Base contract)', function (accounts) {
 
     });
 
+    /**
+     *  Verify that NFT owner can split a NFT using the proxy contract
+     *  Verify that proxy contract is the new owner of the original NFT
+     *  Verify that user owns all tokens of the new NFTSplitter NFT
+     */
     it('03- NFT Owner should be able to split NFT ', async function () {
         const {proxyAddress, splitter} = await initTextContext(factoryContract, alice, aliceNFT, true);
 
@@ -131,6 +144,9 @@ contract('NFTSplitter (Base contract)', function (accounts) {
         assert.equal(finalProxyBalance, tokensToCreate, 'Proxy should own all tokens');
     });
 
+    /**
+     *  Verify that original NFT are used in new NFT
+     */
     it('04- NFT Owner should be able to split NFT (ERC1155 does not have name and symbol variables) ', async function () {
         ERC1155Contract = await ERC1155.new({from: alice});
         await ERC1155Contract.mint(alice, tokenId, tokensToCreate, '0x0000', {from: alice});
@@ -153,6 +169,9 @@ contract('NFTSplitter (Base contract)', function (accounts) {
         assert.equal(finalProxyBalance, tokensToCreate, 'Proxy should own all tokens');
     });
 
+    /**
+     *  Verify that only NFT owner is allowed to split the NFT
+     */
     it('05- Revert transaction if split creation is not executed by NFT owner', async function () {
         const {proxyAddress, splitter} = await initTextContext(factoryContract, alice, aliceNFT, true);
 
@@ -177,6 +196,9 @@ contract('NFTSplitter (Base contract)', function (accounts) {
         assert.equal(finalBobBalance, 0, 'should be 0');
     });
 
+    /**
+     *  Verify that  NFT owner is not allowed to split same NFT two times
+     */
     it('06- NFT Owner should not be able to split same NFT twice', async function () {
         const {proxyAddress, splitter} = await initTextContext(factoryContract, alice, aliceNFT, true);
 
@@ -202,6 +224,9 @@ contract('NFTSplitter (Base contract)', function (accounts) {
         assert.equal(finalProxyBalance, tokensToCreate, 'Proxy contract should own all tokens')
     });
 
+    /**
+     *  Verify that owner approved proxy contract in NFT contract
+     */
     it('07- NFT Owner should not be able to split unapproved NFT', async function () {
         const {proxyAddress, splitter} = await initTextContext(factoryContract, alice, aliceNFT, false);
 
@@ -224,7 +249,9 @@ contract('NFTSplitter (Base contract)', function (accounts) {
         assert.equal(finalProxyBalance, 0, 'Proxy should not have any tokens');
     });
 
-
+    /**
+     *  Verify that a new user is able to buy tokens
+     */
     it('08- Buyer can buy one piece (token)', async function () {
         const {proxyAddress, splitter} = await initTextContext(factoryContract, alice, aliceNFT, true);
         const unitPrice = new BN(web3.utils.toWei('0.1', 'ether'));
@@ -246,6 +273,9 @@ contract('NFTSplitter (Base contract)', function (accounts) {
         assert.equal(initialAliceBalanceETH.toNumber(), finalAliceBalanceETH.minus(value).toNumber() , 'Alice should have more eth');
     });
 
+    /**
+     *  Verify that a new user is able to buy all tokens
+     */
     it('09- Buyer can buy all pieces (tokens)', async function () {
         const {proxyAddress, splitter} = await initTextContext(factoryContract, alice, aliceNFT, true);
         const unitPrice = new BN(web3.utils.toWei('0.2', 'ether'))
@@ -267,6 +297,9 @@ contract('NFTSplitter (Base contract)', function (accounts) {
         assert.equal(initialAliceBalanceETH.toNumber(), finalAliceBalanceETH.minus(price).toNumber() , 'Alice should have more eth');
     });
 
+    /**
+     *  Verify that original NFT owner is using the correct function to buy tokens
+     */
     it('10- Owner should not use buyPiecesFromOwner function', async function () {
         const {proxyAddress, splitter} = await initTextContext(factoryContract, alice, aliceNFT, true);
         const unitPrice = new BN(web3.utils.toWei('0.1', 'ether'));
@@ -292,7 +325,9 @@ contract('NFTSplitter (Base contract)', function (accounts) {
         assert.equal(finalBobBalance, 1, 'Bob should own 1 token');
 
     });
-
+    /**
+     *  Verify that user is not able to buy more tokens that the original minted
+     */
     it('11- Buyer cannot buy more pieces than initial created amount', async function () {
         const {proxyAddress, splitter} = await initTextContext(factoryContract, alice, aliceNFT, true);
         const unitPrice = new BN(web3.utils.toWei('0.05', 'ether'));
@@ -318,6 +353,9 @@ contract('NFTSplitter (Base contract)', function (accounts) {
 
     });
 
+    /**
+     *  Verify that user is not able to buy more tokens that the owner's available supply
+     */
     it('12- Buyer cannot buy from owner more pieces than current available supply', async function () {
         const { splitter} = await initTextContext(factoryContract, alice, aliceNFT, true);
         const unitPrice = new BN(web3.utils.toWei('0.05', 'ether'));
@@ -346,6 +384,9 @@ contract('NFTSplitter (Base contract)', function (accounts) {
 
     });
 
+    /**
+     *  Verify that original NFT can buy pieces from buyer
+     */
     it('13- NFT Owner can buy back pieces', async function () {
         const { splitter} = await initTextContext(factoryContract, alice, aliceNFT, true);
         const unitPrice = new BN(web3.utils.toWei('0.05', 'ether'));
@@ -371,7 +412,9 @@ contract('NFTSplitter (Base contract)', function (accounts) {
         assert.equal(finalBobBalance, 1, 'Bob should own 1 token');
         assert(finalBobBalanceETH.minus(initialBobBalanceETH).isEqualTo(buyBackPrice) , 'Bob should have the eth from the trx');
     });
-
+    /**
+     *  Verify that original NFT is able to withdraw the original NFT
+     */
     it('14- NFT Owner can withdraw NFT after buying back all pieces', async function () {
         const {proxyAddress, splitter} = await initTextContext(factoryContract, alice, aliceNFT, true);
         const unitPrice = new BN(web3.utils.toWei('0.07', 'ether'));
@@ -398,6 +441,9 @@ contract('NFTSplitter (Base contract)', function (accounts) {
 
     });
 
+    /**
+     *  Verify that original NFT is able to withdraw the original NFT after split
+     */
     it('15- NFT Owner can withdraw NFT right after splitter creation', async function () {
         const { splitter} = await initTextContext(factoryContract, alice, aliceNFT, true);
         const unitPrice = new BN(web3.utils.toWei('0.5', 'ether'));
@@ -416,7 +462,9 @@ contract('NFTSplitter (Base contract)', function (accounts) {
         assert.equal(nftBalance, tokensToCreate, `Alice should own ${tokensToCreate} tokens from her original NFT`);
 
     });
-
+    /**
+     *  Verify that Buyer is able to withdraw the original NFT
+     */
     it('16- All pieces Owner can withdraw all tokens from splitter', async function () {
         const { proxyAddress, splitter} = await initTextContext(factoryContract, alice, aliceNFT, true);
         const unitPrice = new BN(web3.utils.toWei('0.5', 'ether'));
