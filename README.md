@@ -112,7 +112,8 @@ const address = '0x26dD43A43071D70245312e2491311E11B2676F0e';
 ```
 npm start
 ```
-6. Open [http://localhost:3000/](http://localhost:3000/)
+6. Create and mint a new NFT 
+7. Open [http://localhost:3000/](http://localhost:3000/) and interact with the NFT created in the previous step
 
 
 ## Ethereum account for NFT certification
