@@ -4,16 +4,17 @@ import "@openzeppelin/contracts/proxy/Proxy.sol";
 import "./NFTSplitterAdmin.sol";
 import "./NFTSplitterStorage.sol";
 
+/**
+ * @notice Proxy contract that is created in the Factory contract
+ * @dev it delegates all the logic to the NFTSplitterBase contract that is
+ *  passed as parameter during contract creation
+*/
 contract NFTSplitterProxy is NFTSplitterStorage, Proxy {
-    // Contract name
+    // nft name
     string public name;
-
-    // Contract symbol
+    // nft symbol
     string public symbol;
-
     address private implementation;
-
-
     constructor(
         address _nft,
         uint _tokenId,

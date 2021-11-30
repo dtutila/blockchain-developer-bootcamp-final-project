@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import styled from 'styled-components';
 import Button from 'react-bootstrap/Button';
 import { useWeb3React } from '@web3-react/core';
@@ -8,6 +8,7 @@ import Card from './Card';
 import { injected } from '../connectors';
 import { shortenAddress } from '../utils/shortenAddress';
 import {colors} from '../theme';
+import {useAppContext} from '../AppContext';
 
 const MetamaskLogo = styled.img.attrs({
   src: MMLogo,
@@ -19,14 +20,22 @@ const ConnectBtn2 = styled(Button).attrs({ variant: 'outline-dark' })``;
 const ConnectBtn = styled.button`
   /* Adapt the colors based on primary prop */
   background: ${colors.primary_dark};
-  color: ${props => props.primary ? "white" : "palevioletred"};
-
+  color: white;
+  font-size: 1em;
+  border: 2px solid;
+  border-radius: 3px;
 
 `;
 
 
 const MetamaskConnectButton = () => {
   const { activate, active, account, deactivate } = useWeb3React();
+    const { setNFT, setTxnStatus, setErrorMessage } = useAppContext();
+  const logOut = () => {
+    setNFT({});
+    setTxnStatus('');
+    setErrorMessage('');
+  }
 
   if (active) {
     return (

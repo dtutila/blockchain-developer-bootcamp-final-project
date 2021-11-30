@@ -2,7 +2,6 @@ import { useContract } from './useContract';
 
 import useIsValidNetwork from '../hooks/useIsValidNetwork';
 import { useWeb3React } from '@web3-react/core';
-import { useDispatch, useSelector } from 'react-redux';
 import {formatEther, formatUnits, parseEther} from '@ethersproject/units';
 import { useEffect } from 'react';
 
@@ -11,7 +10,7 @@ import {useAppContext} from '../AppContext';
 import {Contract} from '@ethersproject/contracts';
 import getNFT from '../abi/nft';
 const {abi: nftabi} = getNFT();
-
+const confirmations = 1;
 export const useSplitterContract = (splitterAddress) => {
 
   const { account, library } = useWeb3React();
@@ -95,7 +94,7 @@ export const useSplitterContract = (splitterAddress) => {
         const trx = await splitterContract.splitMyNFT(tokenId, parseEther(price), percentage, pieces,  {
           from: account
         });
-        trx.wait(1).then(
+        await trx.wait(confirmations).then(
             res => {
 
               console.log('splitMyNFT NFT ->', res);
@@ -121,7 +120,7 @@ export const useSplitterContract = (splitterAddress) => {
           from: account,
           value: parseEther(paymentAmount)
         });
-        trx.wait(1).then(
+        await trx.wait(confirmations).then(
             res => {
               console.log('buyBackPieces res ->', res);
                   }
@@ -145,7 +144,7 @@ export const useSplitterContract = (splitterAddress) => {
           from: account,
           value: parseEther(paymentAmount)
         });
-        trx.wait(1).then(
+        await trx.wait(confirmations).then(
             res => {
               console.log('buyPiecesFromOwner res ->', res);
                }
@@ -166,7 +165,7 @@ export const useSplitterContract = (splitterAddress) => {
         const trx = await splitterContract.withdrawOriginalNFT( {
           from: account
         });
-        trx.wait(1).then(
+        await trx.wait(confirmations).then(
             res => {
               console.log('withdrawOriginalNFT res ->', res);
             }

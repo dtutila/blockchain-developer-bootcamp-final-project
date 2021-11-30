@@ -20,12 +20,4 @@ contract NFTSplitterStorage {
     address public originalNFT; //original NFT address
     address public originalOwner; //original NFT owner address
     address public settings; // admin contract address
-
-   // mapping(address => uint256) owners;
-
-
-
-
-  constructor() public {
-  }
 }

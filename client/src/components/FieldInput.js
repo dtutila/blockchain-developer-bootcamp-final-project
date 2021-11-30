@@ -1,7 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import ethLogo from '../static/eth-logo.svg';
-import compLogo from '../static/comp-logo.svg';
 import Text from './Text';
 import {colors} from '../theme';
 

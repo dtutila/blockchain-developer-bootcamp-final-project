@@ -109,7 +109,9 @@ contract NFTSplitter is
     }
 
 
-    //mint function will not be needed after contract creation
+    /**
+    * @notice mint function not needed
+    */
     function mint(
         address account,
         uint256 id,
@@ -119,7 +121,9 @@ contract NFTSplitter is
         revert("Function not implemented");
     }
 
-    //mint function will not be needed after contract creation
+    /**
+    * @notice mintBatch function not needed
+    */
     function mintBatch(
         address to,
         uint256[] memory ids,
@@ -181,7 +185,7 @@ contract NFTSplitter is
     }
 
     /**
-     * @dev See {IERC1155-safeTransferFrom}.
+     * @dev only the splitter proxy associated to the NFT-TokenId can transfer tokens
      */
     function safeTransferFrom(
         address from,
@@ -252,16 +256,15 @@ contract NFTSplitter is
      */
 
     function buyBackPieces(address _from, uint256 amount) external payable onlyOriginalNFTOwner nonReentrant {
-        uint currentBalance = balanceOf(_from, tokenId);
+
         uint buyBackPrice = (unitPrice + (unitPrice * buyPercentage  / 100 )) * amount;
         require(msg.value  >= buyBackPrice, 'NFTSplitter: insufficient value for this transaction');
 
         _safeTransferFrom(_from, msg.sender, tokenId, amount, "");
-        (bool sent, bytes memory data) = _from.call{value: buyBackPrice}("");
+        (bool sent, ) = _from.call{value: buyBackPrice}("");
 
         require(sent, "Failed to send Ether");
         emit NFTSplitBuyBack(originalNFT, msg.sender, buyPercentage, buyBackPrice);
-
     }
 
     /**
@@ -278,7 +281,7 @@ contract NFTSplitter is
         require(msg.value >= piecePrice, 'NFTSplitter: not enough value to buy pieces');
 
         _safeTransferFrom(originalOwner, msg.sender, tokenId, amount, "");
-        (bool sent, bytes memory data) = originalOwner.call{value: msg.value}("");
+        (bool sent, ) = originalOwner.call{value: msg.value}("");
 
         emit NFTSplitSold(originalOwner, msg.sender, amount, piecePrice);
         require(sent, "Failed to send Ether");
