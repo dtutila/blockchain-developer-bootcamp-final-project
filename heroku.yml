@@ -1,7 +1,0 @@
-build:
-  docker:
-    web: client/Dockerfile.heroku
-  config:
-    NODE_ENV: production
-
-
