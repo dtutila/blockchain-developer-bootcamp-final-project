@@ -61,15 +61,15 @@ export const useSplitterContract = (splitterAddress) => {
             }));
             console.log('events ->', owners );
 
-            setNFT({ status: 'READY', originalOwner, isOriginalOwner, nftName, tokenId: tokenId.toString(), nftAddress, nftBalance:  nftBalance.toString(), approved, owners:owners, percentage: percentage.toString(), unitPrice: parseFloat(formatEther(unitPrice)).toPrecision(2), pieces: pieces.toString(), name  });
+            setNFT({ status: 'READY', splitterAddress,originalOwner, isOriginalOwner, nftName, tokenId: tokenId.toString(), nftAddress, nftBalance:  nftBalance.toString(), approved, owners:owners, percentage: percentage.toString(), unitPrice: parseFloat(formatEther(unitPrice)).toPrecision(2), pieces: pieces.toString(), name  });
             //setTxnStatus('READY');
           } else {
-            setNFT({ status: 'APPROVED', originalOwner, nftName, isOriginalOwner, tokenId: tokenId.toString(), nftAddress, nftBalance: nftBalance.toString(), approved, owners: [], percentage: percentage.toString(), unitPrice: parseFloat(formatEther(unitPrice)).toPrecision(2), pieces: pieces.toString(), name  });
+            setNFT({ status: 'APPROVED', splitterAddress, originalOwner, nftName, isOriginalOwner, tokenId: tokenId.toString(), nftAddress, nftBalance: nftBalance.toString(), approved, owners: [], percentage: percentage.toString(), unitPrice: parseFloat(formatEther(unitPrice)).toPrecision(2), pieces: pieces.toString(), name  });
 
           }
 
         } else {
-          setNFT({ status: 'PENDING_APPROVAL', nftName, tokenId: tokenId.toString(), nftBalance: nftBalance.toString(), approved, originalOwner, isOriginalOwner});
+          setNFT({ status: 'PENDING_APPROVAL', splitterAddress, nftName, tokenId: tokenId.toString(), nftBalance: nftBalance.toString(), approved, originalOwner, isOriginalOwner});
 
         }
 
@@ -161,6 +161,7 @@ export const useSplitterContract = (splitterAddress) => {
   const withdrawOriginalNFT = async ( ) => {
     try {
       if (account && isValidNetwork) {
+        setTxnStatus('LOADING');
         console.log('withdrawOriginalNFT');
         const trx = await splitterContract.withdrawOriginalNFT( {
           from: account

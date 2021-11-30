@@ -21,11 +21,11 @@ const App = () => {
                 <div>
                     <Header/>
                     <Switch>
-                        <Route exact path="/split" component={Splitter}/>
+                        <Route exact path="/" component={Splitter}/>
                         <Route exact path="/nft/:nftAddress/:tokenId" component={NFT} />
-                        <Route path={'/'}>
-                            <Redirect to="/split"/>
-                        </Route>
+                        {/*<Route path={'/'}>*/}
+                        {/*    <Redirect to="/split"/>*/}
+                        {/*</Route>*/}
                     </Switch>
                 </div>
             </Web3ReactProvider>

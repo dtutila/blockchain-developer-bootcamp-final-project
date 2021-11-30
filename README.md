@@ -1,10 +1,16 @@
 # Blockchain Developer Bootcamp Final Project
 
 ## Deployed UI
-
+[https://nft-splitter.netlify.app/](https://nft-splitter.netlify.app/)
 ## Screencast
 
-[https://someurl.com](https://someurl.com)
+[https://youtu.be/Q1NX3jX49A0](https://youtu.be/Q1NX3jX49A0)
+
+## Deployed Addresses
+* Network name:    'rinkeby'
+* NFTSplitterAdmin: 0x23e056A93548D2e798b86e31f26945105dF626C6
+* NFTSplitterFactory: 0xd952634001501f45c84bFCC6f5CAFDC198d11BFb
+* NFTSplitterAdmin: 0x3de8DB013BCb7Fb891cDfe7bD52E43FC6DcD2a2B
 
 ## Run project
 ### Prerequisites
