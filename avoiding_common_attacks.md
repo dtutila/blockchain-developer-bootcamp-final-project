@@ -9,9 +9,6 @@ NFTSplitter contract implements ReentrancyGuard in all functions that interact w
 ## SWC-104 Unchecked Call Return Value
 The return value of `call` function is checked with a `require` in NFTSplitter contract.
 
-## SWC-101 Integer Overflow and Underflow
-SafeMath is implemented in 
-
 ## SWC-112  Delegatecall to Untrusted Callee
 A NFTSplitterProxy instance will only use the  address of the NFTSplitter deployed contract that was passed as parameter during the proxy creation.
 
