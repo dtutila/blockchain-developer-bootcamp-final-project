@@ -7,7 +7,7 @@ const Factory = () => {
     const { chainId } = useWeb3React();
     const abi = factoryJSON.abi;
     //TODO: remove hardcoded address
-    const address = '0xEF2d9C56b7a66Dee65B8De5402cb9E8f9Ef9Bd83';
+    const address = '0xd952634001501f45c84bFCC6f5CAFDC198d11BFb';
 
     return {abi, address};
 }
