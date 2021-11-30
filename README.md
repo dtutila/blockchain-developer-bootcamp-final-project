@@ -49,9 +49,9 @@ npm install
 ```
 4. Move to client directory
 ```
- cd ../client/
+ cd client/
  ```
-5. run npm install
+5. Run `npm install`  
 ```
 npm install
 ```
@@ -82,7 +82,7 @@ truffle migrate --network development
 ```
 
 ##### Rinkeby
-1. Configure .env file using the [.env.example](https://github.com/dtutila/blockchain-developer-bootcamp-final-project/blob/main/contracts/env.example) file.
+1. Configure .env file using the [.env.example](https://github.com/dtutila/blockchain-developer-bootcamp-final-project/blob/main/env.example) file.
 2. Run migrate command
 ```
 truffle migrate --network rinkeby
