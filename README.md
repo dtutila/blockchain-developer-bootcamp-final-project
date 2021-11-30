@@ -8,9 +8,9 @@
 
 ## Deployed Addresses
 * Network name:    'rinkeby'
-* NFTSplitterAdmin: 0x23e056A93548D2e798b86e31f26945105dF626C6
-* NFTSplitterFactory: 0xd952634001501f45c84bFCC6f5CAFDC198d11BFb
-* NFTSplitterAdmin: 0x3de8DB013BCb7Fb891cDfe7bD52E43FC6DcD2a2B
+* NFTSplitterAdmin: [0x23e056A93548D2e798b86e31f26945105dF626C6](https://rinkeby.etherscan.io/address/0x23e056A93548D2e798b86e31f26945105dF626C6)
+* NFTSplitterFactory: [0xd952634001501f45c84bFCC6f5CAFDC198d11BFb](https://rinkeby.etherscan.io/address/0xd952634001501f45c84bFCC6f5CAFDC198d11BFb)
+* NFTSplitterAdmin: [0x3de8DB013BCb7Fb891cDfe7bD52E43FC6DcD2a2B](https://rinkeby.etherscan.io/address/0x3de8db013bcb7fb891cdfe7bd52e43fc6dcd2a2b)
 
 ## Run project
 ### Prerequisites
@@ -125,8 +125,8 @@ npm start
 6. Open [http://localhost:3000/](http://localhost:3000/)
 
 
-
-
+## Ethereum account for NFT certification
+* 0x760bAADC22c731957b34b2eb901dE9676Ccb256F
 
 
 ## Project Description
