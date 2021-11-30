@@ -24,11 +24,10 @@
 ### Directory Structure
 
 - client: React project directory for the frontend
-- contracts: truffle project directory for the smart contracts
-   - contracts: smart contract files
-   - mocks: smart contract mock files using for testing
-   - migrations: Migration scripts to deploy contracts
-   - test: Javascript unit tests
+- contracts: smart contract files
+      - mocks: smart contract mock files using for testing
+ - migrations: Migration scripts to deploy contracts
+ - test: Javascript unit tests
 
 ### Installing project
 
@@ -38,10 +37,10 @@
 git clone https://github.com/dtutila/blockchain-developer-bootcamp-final-project.git
 ```
 
-2. Move to contract directory
+2. Move to root directory
 
 ```
-cd blockchain-developer-bootcamp-final-project/contracts
+cd blockchain-developer-bootcamp-final-project/
 ```
 3. Run `npm install` command
 
@@ -56,25 +55,16 @@ npm install
 ```
 npm install
 ```
-6. Move to root project directory
-```
-cd ..
-```
-
 
 
 #### Run contract tests local network
 
-1. From root project directory move to contracts directory
-```
-cd contracts
-```
-2. Start ganache-cli (in another terminal)
+1. Start ganache-cli (in another terminal)
 
 ```
 ganache-cli
 ```
-3. Run truffle test command
+2. Inside  project's root directory run truffle test command
 ```
 truffle test --network development
 ```
@@ -82,7 +72,7 @@ truffle test --network development
 
 #### Contract deployment
 ##### Test Network
-1. Start ganache-cli if not running already
+1. Start ganache-cli (if it's not running already)
 ```
 ganache-cli
 ```
@@ -100,10 +90,10 @@ truffle migrate --network rinkeby
 
 
 #### Run frontend
-1. From root project directory move to client directory
+1. From root  directory move to client directory
 
 ```
-cd client
+cd client/
 ```
 2. Deploy contracts to desired network
 3. Get NFTSplitterFactory deployed address from deployment log
