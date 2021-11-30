@@ -8,7 +8,7 @@ NFTSplitter and NFTSplitterProxy contracts that inherits or implement interfaces
 | NFTSplitter     | NFTSplitterStorage,     ERC165,    ERC1155,     IERC1155Receiver,     ReentrancyGuard   | 
 | NFTSplitterProxy | NFTSplitterStorage, Proxy | 
 
-### Contract Descriptions
+### Contracts Description
 * **NFTSplitter**: it contains the logic of the application, this contract can be upgradable later.
 * **NFTSplitterStorage**: this contract contains the variables used in the logic. This contract helps to avoid storage collision when `delegateCall`  function is executed.
 * **NFTSplitterProxy**: this contract delegates all the logic execution to NFTSplitter contract.
@@ -47,7 +47,8 @@ NFTSplitterFactory creates new instances of NFTSplitterProxy.
 
 
 ## Upgradable Contract
-The base application logic can be upgraded . A new the NFTSplitterAdmin contract implementation can be deployed to the network and the deployed address can be updated in the NFTSplitterAdmin using the `upgrade()` function.
+The base application logic can be upgraded. A new the **NFTSplitter** contract implementation can be deployed to the network and the new address can be updated in the NFTSplitterAdmin using the `upgrade()` function.
 
 ## Pausable
-The creation of new proxy contracts in the Factory can be paused and unpaused, this can be controlled in the NFTSplitterAdmin contract with the `pause()` and `unpause()` functions The creation of new proxy contracts in the Factory can be paused and unpaused, this can be controlled in the NFTSplitterAdmin contract with the `pause()` and `unpause()` functions. The state can be obtained with the function `isPaused()`.  
+The creation of new proxy contracts in the Factory can be paused and unpaused, this can be controlled in the NFTSplitterAdmin contract by using the `pause()` and `unpause()` functions. 
+The pause state can be obtained with the function `isPaused()`.  
