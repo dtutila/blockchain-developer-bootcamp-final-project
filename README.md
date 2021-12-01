@@ -164,3 +164,5 @@ To build a decentralized app to allow users to split a NFT and trade the pieces 
 ## Roadmap
 * Add support to allow  multiple user to buy pieces 
 * Improve UX/UI
+* ERC721 support
+* Unit tests for NFTSplitterAdmin contract
